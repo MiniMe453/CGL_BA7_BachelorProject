@@ -16,7 +16,8 @@ namespace Rover.Can
     public class CanChannel
     {
         public event Action<CanFrame> CAN_MESSAGE_RECIEVED;
-        public List<CanNode> nodes = new List<CanNode>();
+        private List<CanNode> m_nodes = new List<CanNode>();
+        public List<CanNode> Nodes { get { return m_nodes; } }
 
         public void SendCANFrame(CanFrame frame)
         {
@@ -25,30 +26,42 @@ namespace Rover.Can
 
         public void AddCANNode(CanNode node)
         {
-            nodes.Add(node);
+            m_nodes.Add(node);
         }
     }
 
-    public class CanNode : MonoBehaviour
+    public class CanNode
     {
         private ushort m_id;
         public ushort ID { get { return m_id; } }
+        private string m_nodeName;
+        public string NodeName { get { return m_nodeName; } }
         private CanChannel channel;
         private List<ushort> messageMask = new List<ushort>();
         private Timer CANTimer;
-        protected List<object> canData = new List<object>();
+        private object[] m_canData;
+        public object[] CANData { get { return m_canData; } set { m_canData = value; } }
         private float m_timeSinceLastMesssage;
         public float TimeSinceLastMessage { get { return m_timeSinceLastMesssage; } }
+        private MonoBehaviourCan parent;
 
-        protected void InitializeCANNode(ushort canID, CanChannel canChannel)
+        public CanNode(ushort canID, string nodeName, CanChannel canChannel, MonoBehaviourCan parentClass, bool receiveCanFrame = true)
         {
             m_id = canID;
+            m_nodeName = nodeName;
+            parent = parentClass;
             channel = canChannel;
-            channel.CAN_MESSAGE_RECIEVED += ReadCANFrame;
             channel.AddCANNode(this);
+
+            if (receiveCanFrame)
+            {
+                parentClass.EOnFixedUpdate += OnFixedUpdate;
+                channel.CAN_MESSAGE_RECIEVED += ReadCANFrame;
+            }
+
         }
 
-        void FixedUpdate()
+        void OnFixedUpdate()
         {
             m_timeSinceLastMesssage += Time.deltaTime;
         }
@@ -57,7 +70,7 @@ namespace Rover.Can
         ///</summary>
         protected void StartCANTimer(float delay)
         {
-            CANTimer = Timer.Register(delay, () => PrepareCANFrame(), isLooped: true);
+            CANTimer = Timer.Register(delay, () => SendCANFrame(), isLooped: true);
         }
 
         protected void DestroyCANNode()
@@ -68,47 +81,78 @@ namespace Rover.Can
             channel.CAN_MESSAGE_RECIEVED -= ReadCANFrame;
         }
 
-        protected virtual void PrepareCANFrame()
-        {
-            SendCANFrame();
-        }
-
-        private void SendCANFrame()
+        public void SendCANFrame()
         {
             CanFrame frame = new CanFrame();
             frame.nodeID = m_id;
-            frame.data = canData.ToArray();
-            canData.Clear();
+            frame.data = m_canData;
 
             channel.SendCANFrame(frame);
         }
 
         private void ReadCANFrame(CanFrame frame)
         {
-            if (!messageMask.Contains(frame.nodeID) && messageMask.Count != 0)
+            if (!messageMask.Contains(frame.nodeID))
+            {
+                Debug.LogWarning($"{parent.name} recieved a message, but the message mask has not been set up properly!");
                 return;
+            }
 
-            OnCANFrameRead(frame.data);
+            parent.OnCANFrameRecieved(frame);
             m_timeSinceLastMesssage = 0f;
         }
 
         ///<summary>
         ///If used, the node will only read messages that are included inside the filter.
         ///</summary>
-        protected void SetRXFilter(List<ushort> filterIDs)
+        public void SetRXFilter(List<ushort> filterIDs)
         {
             messageMask = filterIDs;
-        }
-
-        protected virtual void OnCANFrameRead(object[] data)
-        {
-
         }
     }
 
     public static class CanNetwork
     {
         public static CanChannel Can0 = new CanChannel();
+    }
+
+    public class MonoBehaviourCan : MonoBehaviour
+    {
+        [Header("CAN Network Variables")]
+        [SerializeField]
+        private ushort canID;
+        [SerializeField]
+        private string nodeName;
+        [SerializeField]
+        private bool receiveCanFrame = true;
+        [SerializeField]
+        private List<ushort> messageMask = new List<ushort>();
+        protected CanNode node;
+        public event Action EOnFixedUpdate;
+
+        void Awake()
+        {
+            node = new CanNode(canID, nodeName, CanNetwork.Can0, this, receiveCanFrame);
+
+            if (messageMask.Count > 0)
+                node.SetRXFilter(messageMask);
+
+            Init();
+        }
+
+        protected virtual void Init()
+        {
+
+        }
+        protected virtual void FixedUpdate()
+        {
+            EOnFixedUpdate?.Invoke();
+        }
+
+        public virtual void OnCANFrameRecieved(CanFrame frame)
+        {
+
+        }
     }
 }
 

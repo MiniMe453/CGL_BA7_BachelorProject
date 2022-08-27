@@ -3,24 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using Rover.Can;
 using UnityTimer;
+using Rover.Temperature;
 
-public class Sensor_Temperature : CanNode
+public class Sensor_Temperature : MonoBehaviourCan
 {
-    void Awake()
+    protected override void Init()
     {
-        InitializeCANNode(0x000a, CanNetwork.Can0);
+        Timer.Register(0.5f, () => ReadTemperatureData(), isLooped: true);
     }
 
-    void Start()
+    void ReadTemperatureData()
     {
-        StartCANTimer(0.75f);
-        Timer.Register(10f, () => DestroyCANNode());
-    }
+        object[] data = new object[] { Temperature.ReadTemperatureFromLocation(transform.position) };
 
-    protected override void PrepareCANFrame()
-    {
-        canData.Add(100);
-
-        base.PrepareCANFrame();
+        node.CANData = data;
+        node.SendCANFrame();
     }
 }
