@@ -11,11 +11,13 @@ namespace Rover.OS
     {
         public Canvas canvas;
         public TemperatureSensor_Reader reader;
+        private bool showingListView;
         protected override void Init()
         {
             applicationInputs["pause"].performed += PauseGraph;
             applicationInputs["start"].performed += StartGraph;
             applicationInputs["clear"].performed += ClearGraph;
+            applicationInputs["list"].performed += ShowListView;
         }
 
         private void PauseGraph(InputAction.CallbackContext context)
@@ -31,6 +33,11 @@ namespace Rover.OS
         private void ClearGraph(InputAction.CallbackContext context)
         {
             reader.ClearGraph();
+        }
+
+        private void ShowListView(InputAction.CallbackContext context)
+        {
+            reader.SwitchView();
         }
 
         protected override void OnAppLoaded()

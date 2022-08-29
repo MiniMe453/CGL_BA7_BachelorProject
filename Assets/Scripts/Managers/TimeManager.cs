@@ -6,7 +6,7 @@ using System;
 
 namespace Rover.DateTime
 {
-    public struct DateTime
+    public struct DateTimeStruct
     {
         public int Years;
         public int Days;
@@ -19,14 +19,14 @@ namespace Rover.DateTime
     {
         private static float m_timeScale = 1f;
         public static float TimeScale { get { return m_timeScale; } set { m_timeScale = value; } }
-        public static DateTime dateTime;
+        public static DateTimeStruct dateTime;
         public static event Action<string> EOnDateTimeUpdated;
 
         static TimeManager()
         {
             Timer.Register(1f, () => UpdateTime(), isLooped: true);
 
-            DateTime tmp = new DateTime();
+            DateTimeStruct tmp = new DateTimeStruct();
             tmp.Years = 5;
             tmp.Days = 167;
             tmp.Hours = 8;
@@ -38,7 +38,7 @@ namespace Rover.DateTime
 
         private static void UpdateTime()
         {
-            DateTime tmp = dateTime;
+            DateTimeStruct tmp = dateTime;
 
             tmp.Seconds++;
 
@@ -65,10 +65,10 @@ namespace Rover.DateTime
 
             dateTime = tmp;
 
-            EOnDateTimeUpdated?.Invoke(TimeToString(dateTime));
+            EOnDateTimeUpdated?.Invoke(TimeToStringFull(dateTime));
         }
 
-        public static string TimeToString(DateTime dateTimeStruct)
+        public static string TimeToStringFull(DateTimeStruct dateTimeStruct)
         {
             string year = dateTimeStruct.Years.ToString();
             string day = dateTimeStruct.Days.ToString();
@@ -95,6 +95,46 @@ namespace Rover.DateTime
 
 
             return year + "y, " + day + "d, " + hour + ":" + minute + ":" + seconds;
+        }
+
+        public static string TimeToStringYD(DateTimeStruct dateTimeStruct)
+        {
+            string year = dateTimeStruct.Years.ToString();
+            string day = dateTimeStruct.Days.ToString();
+
+            if (dateTimeStruct.Days < 10)
+                day = "00" + day;
+            else if (dateTimeStruct.Days < 100)
+                day = "0" + day;
+
+            if (dateTimeStruct.Years < 10)
+                year = "0" + year;
+
+            return year + "y, " + day + "d";
+        }
+
+        public static string TimeToStringTime(DateTimeStruct dateTimeStruct)
+        {
+            string hour = dateTimeStruct.Hours.ToString();
+            string minute = dateTimeStruct.Minutes.ToString();
+            string seconds = dateTimeStruct.Seconds.ToString();
+
+            if (dateTimeStruct.Hours < 10)
+                hour = "0" + hour;
+
+            if (dateTimeStruct.Minutes < 10)
+                minute = "0" + minute;
+
+            if (dateTimeStruct.Seconds < 10)
+                seconds = "0" + seconds;
+
+
+            return hour + ":" + minute + ":" + seconds;
+        }
+
+        public static DateTimeStruct GetCurrentDateTime()
+        {
+            return dateTime;
         }
     }
 }

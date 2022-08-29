@@ -22,19 +22,26 @@ namespace Rover.Interface
         public GUIStyle testStyle;
 
         public static DeveloperCommand<string> PRINT_HELLO_WORLD = new DeveloperCommand<string>(
-            "print",
-            "Prints a string to the debug console",
-            "print <string>",
-            (x) => DevCommandPrintHelloWorld(x),
-            "String printed to Debug.LogError()"
+            "PRT",
+            "Prints a string to console",
+            "PRT <string>",
+            (x) => DevCommandPrintHelloWorld(x)
             );
 
         public static DeveloperCommand CREATE_COMMAND_FILE = new DeveloperCommand(
-            "dev.createCommandFile",
-            "Creates a CSV file of all the registered commands",
-            "dev.createCommandFile",
+            "CMDFILE",
+            "Ouputs file of all commands",
+            "CMDFILE",
             () => Command_CreateCommandFile(),
             "Command CSV file created!"
+            );
+
+
+        public static DeveloperCommand HELP = new DeveloperCommand(
+            "HELP",
+            "Shows all commands",
+            "HELP",
+            () => Command_Help()
             );
 
         private List<string> commandHistory = new List<string>();
@@ -164,9 +171,6 @@ namespace Rover.Interface
             GUI.backgroundColor = Color.black;
 
             GUI.Box(new Rect(0, 0, Screen.width, Screen.height), "", testStyle);
-            //GUI.Box(new Rect(0, 0, Screen.width, Screen.height), "", textStyle);
-
-            //GUI.Box(new Rect(0, Screen.height - consoleHeight, Screen.width, consoleHeight), "");
 
             GUI.backgroundColor = new Color(0, 0, 0, 0);
 
@@ -174,12 +178,20 @@ namespace Rover.Interface
             input = GUI.TextField(new Rect(0, Screen.height + 10, Screen.width - 20f, (consoleHeight / 4) * 3), input, 255, testStyle);
             GUI.FocusControl("DebugConsole");
 
-            string inputModified = "Z:/>" + input + "_";
+            if (input.Length > 55)
+                input = input.Remove(input.Length - 1, 1);
+
+            string inputModified = ">" + input;
+
+            if (input.Length < 55)
+                inputModified += "_";
+
+            testStyle.normal.textColor = Color.white;
             GUI.Box(new Rect(10f, Screen.height - (consoleHeight), Screen.width - 20f, (consoleHeight / 4) * 3), inputModified, testStyle);
 
             UpdateCommandHistoryDisplay(testStyle);
 
-            //if (input != "") ShowAvailableCommands(textStyle);
+            //if (input != "") ShowAvailableCommands(textStyle); //Uncomment this line if you want to show all available commands while the user is typing
         }
 
         private void HandleInput()
@@ -316,9 +328,9 @@ namespace Rover.Interface
 
         private void CheckCommandHistoryLength()
         {
-            if (commandHistory.Count <= 26) return;
+            if (commandHistory.Count <= 20) return;
 
-            int numToRemove = commandHistory.Count - 26;
+            int numToRemove = commandHistory.Count - 20;
 
             for (int i = 0; i <= numToRemove; i++)
             {
@@ -367,8 +379,23 @@ namespace Rover.Interface
             }
         }
 
+        public void WriteFullLine(char character, Color textColor)
+        {
+            string fullLine = "";
+
+            for (int i = 0; i < 56; i++)
+            {
+                fullLine += character;
+            }
+
+            UpdateCommandHistory(fullLine, textColor);
+        }
+
         private static void DevCommandPrintHelloWorld(string value)
         {
+            DeveloperConsole.instance.WriteFullLine('%', Color.red);
+            DeveloperConsole.instance.UpdateCommandHistory(value, Color.white);
+            DeveloperConsole.instance.WriteFullLine('=', Color.blue);
             Debug.LogError(value);
         }
 
@@ -384,6 +411,18 @@ namespace Rover.Interface
             var fullPath = Path.Combine(Application.dataPath + "\\GameData\\OutputFiles", "devCommands.csv");
 
             File.WriteAllLines(fullPath, fileLines);
+        }
+
+        private static void Command_Help()
+        {
+            string line = "";
+
+            for (int i = 0; i < DeveloperCommandDatabase.commandList.Count; i++)
+            {
+                line = DeveloperCommandDatabase.commandList[i].commandID + ": " + DeveloperCommandDatabase.commandList[i].commandDescription;
+                DeveloperConsole.instance.UpdateCommandHistory(line, Color.white);
+                line = "";
+            }
         }
     }
 }

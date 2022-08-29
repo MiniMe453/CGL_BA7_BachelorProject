@@ -1,4 +1,5 @@
 Name,Description,Format,Return Message
-print,Prints a string to the debug console,print <string>,String printed to Debug.LogError()
-dev.createCommandFile,Creates a CSV file of all the registered commands,dev.createCommandFile,Command CSV file created!
-TSCU,Loads a temperature UI,TSCU,
+PRT,Prints a string to console,PRT <string>,
+CMDFILE,Ouputs file of all commands,CMDFILE,Command CSV file created!
+HELP,Shows all commands,HELP,
+TSCU,Load the Temperature Control Unit,TSCU,

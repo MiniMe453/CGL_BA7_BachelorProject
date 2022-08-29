@@ -4,12 +4,14 @@ using UnityEngine;
 using UnityTimer;
 using System;
 using Rover.Settings;
+using Rover.DateTime;
 
 namespace Rover.Can
 {
     public struct CanFrame
     {
         public ushort nodeID;
+        public DateTimeStruct timestamp;
         public object[] data;
     }
 
@@ -85,6 +87,7 @@ namespace Rover.Can
         {
             CanFrame frame = new CanFrame();
             frame.nodeID = m_id;
+            frame.timestamp = TimeManager.GetCurrentDateTime();
             frame.data = m_canData;
 
             channel.SendCANFrame(frame);

@@ -9,33 +9,6 @@ namespace Rover.Temperature
         public Vector3 position;
         public float temperature;
     }
-    public class TemperatureSystemTEst : MonoBehaviour
-    {
-        public int size;
-
-        // void Start()
-        // {
-        //     for (int i = 0; i < size; i++)
-        //     {
-        //         for (int j = 0; j < size; j++)
-        //         {
-        //             TemperatureNode tmpNode = new TemperatureNode();
-        //             tmpNode.temperature = Random.Range(10f, 15f);
-        //             tmpNode.position = new Vector3(i * 3f, 0f, j * 3f);
-
-        //             Temperature.AddTemperatureNode(tmpNode);
-        //         }
-        //     }
-        // }
-
-        // void OnDrawGizmos()
-        // {
-        //     foreach (TemperatureNode node in Temperature.TemperatureNodes)
-        //     {
-        //         Gizmos.DrawSphere(node.position, 0.25f);
-        //     }
-        // }
-    }
 
     public static class Temperature
     {
@@ -52,7 +25,7 @@ namespace Rover.Temperature
             int nodeCount = 0;
             float nodeTempFull = 0f;
             location.y = 0;
-            float backgroundTemp = Random.Range(backgroundTempAvg - 1f, backgroundTempAvg + 1f);
+            float backgroundTemp = Random.Range(backgroundTempAvg - 0.5f, backgroundTempAvg + 0.5f);
 
             foreach (TemperatureNode node in m_temperatureNodes)
             {
