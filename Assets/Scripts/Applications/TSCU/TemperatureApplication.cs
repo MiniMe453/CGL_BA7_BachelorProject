@@ -4,6 +4,7 @@ using UnityEngine;
 using Rover.OS;
 using Rover.Interface;
 using UnityEngine.InputSystem;
+using UnityTimer;
 
 namespace Rover.OS
 {
@@ -43,10 +44,18 @@ namespace Rover.OS
         protected override void OnAppLoaded()
         {
             UIManager.AddToViewport(canvas);
+
+            Timer.Register(10f, () => ShowMessageBoxTest());
         }
         protected override void OnAppQuit()
         {
             UIManager.RemoveFromViewport(canvas);
+        }
+
+        private void ShowMessageBoxTest()
+        {
+            MessageBox message = UIManager.ShowMessageBox("This is a message box", Color.green, 1f);
+            Timer.Register(5f, () => { UIManager.ShowMessageBox("I am waiting for input", Color.magenta, 10f, true); });
         }
     }
 }

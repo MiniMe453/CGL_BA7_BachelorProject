@@ -26,6 +26,8 @@ namespace Rover.OS
                 () => Command_LoadAppWithID()
             );
 
+            applicationInputs.AddAction("quitApp", binding: "<Keyboard>/q");
+
             applicationInputs["quitApp"].performed += Action_Quit;
 
             Init();
@@ -33,18 +35,7 @@ namespace Rover.OS
 
         protected virtual void OnValidate()
         {
-            bool addQuitAction = true;
-            foreach (InputAction n in applicationInputs.actions)
-            {
-                if (n.name == "quitApp")
-                {
-                    addQuitAction = false;
-                    break;
-                }
-            }
 
-            if (addQuitAction)
-                applicationInputs.AddAction("quitApp", binding: "<Keyboard>/q");
         }
 
         protected virtual void Init()

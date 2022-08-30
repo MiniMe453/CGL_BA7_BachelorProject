@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Rover.Temperature
 {
-    public struct TemperatureNode
+    public class TemperatureNode
     {
         public Vector3 position;
         public float temperature;

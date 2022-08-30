@@ -4,10 +4,10 @@ using UnityEngine;
 
 namespace Rover.Systems
 {
-    public static class System_Power
+    public class PWR : RoverMainSystem
     {
+        public static PWR self = new PWR();
         private static bool m_power;
 
     }
 }
-
