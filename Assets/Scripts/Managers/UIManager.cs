@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Rover.Interface;
+using Rover.OS;
 
 public static class UIManager
 {
@@ -13,7 +14,15 @@ public static class UIManager
     static UIManager()
     {
         messageBox = (GameObject)Resources.Load("MessageBox");
-        Debug.LogError("Messagebox loaded");
+        OperatingSystem.EOnOperationSystemStateChange += OnOperatingSystemStateChanged;
+    }
+
+    public static void OnOperatingSystemStateChanged(OSState newState)
+    {
+        if (newState == OSState.RoverControl)
+        {
+            ClearViewport();
+        }
     }
 
     public static void AddToViewport(Canvas newUI, int sortOrder = 0)

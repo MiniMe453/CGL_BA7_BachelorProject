@@ -36,10 +36,10 @@ namespace Rover.Can
     {
         private ushort m_id;
         public ushort ID { get { return m_id; } }
-        private string m_nodeName;
-        public string NodeName { get { return m_nodeName; } }
+        private string m_m_nodeName;
+        public string m_NodeName { get { return m_m_nodeName; } }
         private CanChannel channel;
-        private List<ushort> messageMask = new List<ushort>();
+        private List<ushort> m_messageMask = new List<ushort>();
         private Timer CANTimer;
         private object[] m_canData;
         public object[] CANData { get { return m_canData; } set { m_canData = value; } }
@@ -47,15 +47,15 @@ namespace Rover.Can
         public float TimeSinceLastMessage { get { return m_timeSinceLastMesssage; } }
         private MonoBehaviourCan parent;
 
-        public CanNode(ushort canID, string nodeName, CanChannel canChannel, MonoBehaviourCan parentClass, bool receiveCanFrame = true)
+        public CanNode(ushort m_canID, string m_nodeName, CanChannel canChannel, MonoBehaviourCan parentClass, bool m_receiveCanFrame = true)
         {
-            m_id = canID;
-            m_nodeName = nodeName;
+            m_id = m_canID;
+            m_m_nodeName = m_nodeName;
             parent = parentClass;
             channel = canChannel;
             channel.AddCANNode(this);
 
-            if (receiveCanFrame)
+            if (m_receiveCanFrame)
             {
                 parentClass.EOnFixedUpdate += OnFixedUpdate;
                 channel.CAN_MESSAGE_RECIEVED += ReadCANFrame;
@@ -95,7 +95,7 @@ namespace Rover.Can
 
         private void ReadCANFrame(CanFrame frame)
         {
-            if (!messageMask.Contains(frame.nodeID))
+            if (!m_messageMask.Contains(frame.nodeID))
             {
                 Debug.LogWarning($"{parent.name} recieved a message, but the message mask has not been set up properly!");
                 return;
@@ -110,7 +110,7 @@ namespace Rover.Can
         ///</summary>
         public void SetRXFilter(List<ushort> filterIDs)
         {
-            messageMask = filterIDs;
+            m_messageMask = filterIDs;
         }
     }
 
@@ -123,22 +123,22 @@ namespace Rover.Can
     {
         [Header("CAN Network Variables")]
         [SerializeField]
-        private ushort canID;
+        private ushort m_canID;
         [SerializeField]
-        private string nodeName;
+        private string m_nodeName;
         [SerializeField]
-        private bool receiveCanFrame = true;
+        private bool m_receiveCanFrame = true;
         [SerializeField]
-        private List<ushort> messageMask = new List<ushort>();
+        private List<ushort> m_messageMask = new List<ushort>();
         protected CanNode node;
         public event Action EOnFixedUpdate;
 
         void Awake()
         {
-            node = new CanNode(canID, nodeName, CanNetwork.Can0, this, receiveCanFrame);
+            node = new CanNode(m_canID, m_nodeName, CanNetwork.Can0, this, m_receiveCanFrame);
 
-            if (messageMask.Count > 0)
-                node.SetRXFilter(messageMask);
+            if (m_messageMask.Count > 0)
+                node.SetRXFilter(m_messageMask);
 
             Init();
         }

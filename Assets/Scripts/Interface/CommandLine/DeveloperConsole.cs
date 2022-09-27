@@ -72,11 +72,6 @@ namespace Rover.Interface
             developerActions.Disable();
         }
 
-        void Start()
-        {
-            Rover.OS.OperatingSystem.SetOSState(OSState.CommandLine);
-        }
-
         private void OnToggleConsole(InputAction.CallbackContext context)
         {
             showConsole = !showConsole;
