@@ -24,16 +24,15 @@ void setup()
   uduino.addCommand("r", ReadAnalogPin);
   uduino.addCommand("br", BundleReadPin);
   uduino.addCommand("b", ReadBundle);
-  uduino.addInitFunction(InitializeServos);
-  uduino.addDisconnectedFunction(DisconnectAllServos);
   uduino.addInitFunction(DisconnectAllServos);
+  uduino.addDisconnectedFunction(DisconnectAllServos);
 }
 
 void ReadBundle() {
-  char *arg;
-  char *number;
+  char *arg = NULL;
+  char *number = NULL;
   number = uduino.next();
-  int len ;
+  int len = 0;
   if (number != NULL)
     len = atoi(number);
   for (int i = 0; i < len; i++) {
@@ -42,8 +41,8 @@ void ReadBundle() {
 }
 
 void SetMode() {
-  int pinToMap;
-  char *arg;
+  int pinToMap = 100; //100 is never reached
+  char *arg = NULL;
   arg = uduino.next();
   if (arg != NULL)
   {
@@ -83,76 +82,83 @@ void PinSetMode(int pin, int type) {
 }
 
 void WritePinAnalog() {
-  int pinToMap;
-  char *arg;
+  int pinToMap = 100;
+  char *arg = NULL;
   arg = uduino.next();
   if (arg != NULL)
   {
     pinToMap = atoi(arg);
   }
 
-  int value;
+  int valueToWrite;
   arg = uduino.next();
   if (arg != NULL)
   {
-    value = atoi(arg);
+    valueToWrite = atoi(arg);
 
     if (ServoConnectedPin(pinToMap)) {
-      UpdateServo(pinToMap, value);
+      UpdateServo(pinToMap, valueToWrite);
     } else {
-      analogWrite(pinToMap, value);
+      analogWrite(pinToMap, valueToWrite);
     }
   }
 }
 
 void WritePinDigital() {
-  int pinToMap;
-  char *arg;
+  int pinToMap = -1;
+  char *arg = NULL;
   arg = uduino.next();
   if (arg != NULL)
-  {
     pinToMap = atoi(arg);
-  }
-  int value;
+
+  int writeValue;
   arg = uduino.next();
-  if (arg != NULL)
+  if (arg != NULL && pinToMap != -1)
   {
-    value = atoi(arg);
-    digitalWrite(pinToMap, value);
+    writeValue = atoi(arg);
+    digitalWrite(pinToMap, writeValue);
   }
 }
 
 void ReadAnalogPin() {
-  int pinToRead;
-  char *arg;
+  int pinToRead = -1;
+  char *arg = NULL;
   arg = uduino.next();
   if (arg != NULL)
   {
     pinToRead = atoi(arg);
-    printValue(pinToRead, analogRead(pinToRead));
+    if (pinToRead != -1)
+      printValue(pinToRead, analogRead(pinToRead));
   }
 }
 
 void ReadDigitalPin() {
-  int pinToRead;
-  char *arg;
+  int pinToRead = -1;
+  char *arg = NULL;
   arg = uduino.next();
   if (arg != NULL)
   {
     pinToRead = atoi(arg);
   }
-  printValue(pinToRead, digitalRead(pinToRead));
+
+  if (pinToRead != -1)
+    printValue(pinToRead, digitalRead(pinToRead));
 }
 
 void BundleReadPin() {
-  int pinToRead;
-  char *arg;
+  int pinToRead = -1;
+  char *arg = NULL;
   arg = uduino.next();
   if (arg != NULL)
   {
     pinToRead = atoi(arg);
+    if (pinToRead != -1) {
+      if (pinToRead < 13)
+        printValue(pinToRead, digitalRead(pinToRead));
+      else
+        printValue(pinToRead, analogRead(pinToRead));
+    }
   }
-  printValue(pinToRead, analogRead(pinToRead));
 }
 
 Servo myservo;
@@ -161,28 +167,27 @@ void loop()
   uduino.update();
 }
 
-void printValue(int pin, int value) {
-  Serial.print(pin);
-  Serial.print(" ");
-  Serial.println(value);
+void printValue(int pin, int targetValue) {
+  uduino.print(pin);
+  uduino.print(" "); //<- Todo : Change that with Uduino delimiter
+  uduino.println(targetValue);
   // TODO : Here we could put bundle read multiple pins if(Bundle) { ... add delimiter // } ...
 }
 
+
+
+
 /* SERVO CODE */
-
-
-
 Servo servos[MAXSERVOS];
 int servoPinMap[MAXSERVOS];
-
-void InitializeServos() {
-  //Serial.println("Init all servos");
+/*
+  void InitializeServos() {
   for (int i = 0; i < MAXSERVOS - 1; i++ ) {
     servoPinMap[i] = -1;
     servos[i].detach();
   }
-}
-
+  }
+*/
 void SetupServo(int pin) {
   if (ServoConnectedPin(pin))
     return;
@@ -190,19 +195,14 @@ void SetupServo(int pin) {
   int nextIndex = GetAvailableIndexByPin(-1);
   if (nextIndex == -1)
     nextIndex = 0;
-
-  //Serial.print("Starting servo on ");
-  //Serial.print(pin);
-  //Serial.print(" index ");
-  //Serial.println(nextIndex);
-  servoPinMap[nextIndex] = pin;
   servos[nextIndex].attach(pin);
+  servoPinMap[nextIndex] = pin;
 }
 
 
 void DisconnectServo(int pin) {
   servos[GetAvailableIndexByPin(pin)].detach();
-  servoPinMap[GetAvailableIndexByPin(pin)] = -1;
+  servoPinMap[GetAvailableIndexByPin(pin)] = 0;
 }
 
 bool ServoConnectedPin(int pin) {
@@ -210,35 +210,20 @@ bool ServoConnectedPin(int pin) {
   else return true;
 }
 
-
-
 int GetAvailableIndexByPin(int pin) {
   for (int i = 0; i < MAXSERVOS - 1; i++ ) {
-    //Serial.print("Finding pin  ");
-    //Serial.print(pin);
-    //Serial.print(" in ");
-    //Serial.print(i);
-    //Serial.print(" value is  ");
-    //Serial.print(servoPinMap[i]);
     if (servoPinMap[i] == pin) {
-      //Serial.println(" -> Found");
       return i;
+    } else if (pin == -1 && servoPinMap[i] < 0) {
+      return i; // return the first available index
     }
-    //Serial.println();
   }
-  return -1; // return first index, but this should not happend
+  return -1;
 }
 
-
-void UpdateServo(int pin, int value) {
+void UpdateServo(int pin, int targetValue) {
   int index = GetAvailableIndexByPin(pin);
-  //Serial.print("Updating servo on ");
-  //Serial.print(pin);
-  //Serial.print(" index ");
-  //Serial.print(index);
-  //Serial.print(" value ");
-  //Serial.println(value);
-  servos[index].write(value);
+  servos[index].write(targetValue);
   delay(10);
 }
 

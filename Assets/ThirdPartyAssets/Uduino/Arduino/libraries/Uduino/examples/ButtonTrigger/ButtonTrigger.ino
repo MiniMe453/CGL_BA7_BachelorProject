@@ -1,27 +1,27 @@
-#include<Uduino.h>
-Uduino uduino("uduinoButton");
+// #include<Uduino.h>
+// Uduino uduino("uduinoButton");
 
-const int buttonPin = 12;
-int buttonState = 0;
-int prevButtonState = 0;
+// const int buttonPin = 53;
+// int buttonState = 0;
+// int prevButtonState = 0;
 
 void setup()
 {
   Serial.begin(9600);
-  pinMode(buttonPin, INPUT_PULLUP);
+  // pinMode(buttonPin, INPUT_PULLUP);
 }
 
 void loop()
 {
-  uduino.readSerial();
+  // uduino.update();
 
-  if (uduino.isInit()) {
-    buttonState = digitalRead(buttonPin);
+  // if (uduino.isConnected()) {
+  //   buttonState = digitalRead(buttonPin);
 
-    if (buttonState != prevButtonState) {
-      Serial.println(buttonState);
-      prevButtonState = buttonState;
-    }
-    delay(15);
-  }
+  //   if (buttonState != prevButtonState) {
+  //  //   uduino.println(buttonState);
+  //     prevButtonState = buttonState;
+  //   }
+  //   delay(15);
+  // }
 }

@@ -1,27 +1,13 @@
 /******************************************************************************* 
+TODO : Clarifier : get parameter ça ne peut pas etre plus grand que 20
+
 Uduino - Uduino — Simple and robust Arduino-Unity communication
 Uduino - Copyright (C) 2016-2017 Marc Teyssier  <marc.teys@gmail.com>
 http://marcteyssier.com
 
 ArduinoSerialCommand - An Arduino library to tokenize and parse commands received over
-a serial port. 
+a serial port. - MIT Licence
 Copyright (C) 2011-2013 Steven Cogswell  <steven.cogswell@gmail.com>
-http://awtfy.com
-
-
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
-
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ***********************************************************************************/
 #ifndef Uduino_h
 #define Uduino_h
@@ -33,7 +19,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 
 //#include <avr/pgmspace.h>
-
+/*
+#if (defined(AVR))
+#include <avr/pgmspace.h>
+#else
+#include <pgmspace.h>
+#endif*/
 // If you want to use UDUINO with the hardware serial port only, and want to disable
 // SoftwareSerial support, and thus don't have to use "#include <SoftwareSerial.h>" in your
 // sketches, then uncomment this define for UDUINO_HARDWAREONLY, and comment out the 
@@ -55,17 +46,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <string.h>
 
-#define UDUINOBUFFER 128 // Max length of bundle
-#define COMMANDMAXNAME 16 // Max length of a command
+#define RECEIVE_MAX_BUFFER 126 // Receive buffer cannot be equal to 0 and greater to 127.
+#define SEND_MAX_BUFFER 256
+#define MAX_COMMAND_NAME 16
+#define MAX_COMMANDS 16
 
-#define MAXCOMMANDS 12
-#define MAXDELIMETER 2
 
-//#define UDUINO_DEBUG 1
+#define MAXDELIMETER 3 // 2 +1
+
+//#define UDUINO_DEBUG 0
 //#undef UDUINO_DEBUG      // Comment for Debug Mode
 
-
-class Uduino
+class Uduino : public Print
 {
   public:
     static Uduino * _instance; 
@@ -110,13 +102,29 @@ class Uduino
     bool isConnected(); 
     void launchInit();
     static bool init; 
-
-  private:
     char * getPrintedIdentity();
 
+    static bool customPrintFunctionPreset;
+    
+    size_t write(uint8_t);
+    size_t write(const char *str) {
+        if(str == NULL)
+            return 0;
+        return write((const uint8_t *) str, strlen(str));
+    }
+    size_t write(const uint8_t *buffer, size_t size);
+    size_t write(const char *buffer, size_t size) {
+        return write((const uint8_t *) buffer, size);}
+
+    size_t printFloat(double number, int digits = 2);
+
+    //size_t printNumber(unsigned long, uint8_t);
+
+  private:
     char inChar;                     // A character read from the serial stream 
-    char buffer[UDUINOBUFFER];       // Buffer of stored characters while waiting for terminator character
-    uint8_t  bufPos;                     // Current position in the buffer
+    char buffer[RECEIVE_MAX_BUFFER];       // Buffer of stored characters while waiting for terminator character
+    char parameterBuffer[20];        // Buffer of the parameter
+    uint16_t  bufPos;                // Current position in the buffer
     char delim[MAXDELIMETER];        // null-terminated list of character to be used as delimeters for tokenizing (default " ")
     char delimBundle[MAXDELIMETER];  // null-terminated list of character to be used as delimeters for tokenizing (default " ")
     char term;                       // Character that signalsc end of command (default '\r')
@@ -124,13 +132,13 @@ class Uduino
     char *last;                      // State variable used by strtok_r during processing
     
     typedef struct _callback {
-      char command[COMMANDMAXNAME];
+      char command[MAX_COMMAND_NAME];
       void (*function)();
     } UduinoCallback;            // Data structure to hold Command/Handler function key-value pairs
    
    // Commands
     int numCommand;
-    UduinoCallback CommandList[MAXCOMMANDS];   // Actual definition for command/handler array
+    UduinoCallback CommandList[MAX_COMMANDS];   // Actual definition for command/handler array
     void (*defaultHandler)();           // Pointer to the default handler function 
     void (*customDisconnected)();           // Pointer to the default disconnected function 
     void (*customInit)();           // Pointer to the default init function 
@@ -142,7 +150,7 @@ class Uduino
     bool defaultFunctionPreset = false;
     bool initFunctionPreset = false;
     bool disconnectFunctionPreset = false;
-    bool customRead = false;
+   //bool customRead = false;
 
     #ifndef UDUINO_HARDWAREONLY 
     SoftwareSerial *SoftSerial;         // Pointer to a user-created SoftwareSerial object

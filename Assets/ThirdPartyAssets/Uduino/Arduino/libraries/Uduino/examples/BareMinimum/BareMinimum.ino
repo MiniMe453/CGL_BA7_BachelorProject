@@ -9,7 +9,7 @@ void setup()
 }
 
 void returnValue() {
-  Serial.println(analogRead(A0));
+  uduino.println(analogRead(A0));
 }
 
 void doSomething() {
@@ -35,7 +35,7 @@ void loop()
 
     // ... your own code
 
-    // Important: If you Serial.print values outside this loop,
+    // Important: If you uduino.print values outside this loop,
     // the board will not be correclty detected on Unity !
   }
 }

@@ -8,11 +8,10 @@ void setup()
 }
 
 void GetVariable() {
-  Serial.println(analogRead(A0));
+  uduino.println(analogRead(A0));
 }
 void loop()
 {
-  uduino.readSerial();       //!\ This part is mandatory
-
-  delay(50);
+  uduino.update();       //!\ This part is mandatory
+  delay(15);
 }

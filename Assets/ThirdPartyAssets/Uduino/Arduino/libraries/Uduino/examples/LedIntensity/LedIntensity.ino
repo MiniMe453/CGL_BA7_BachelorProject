@@ -16,7 +16,6 @@ void SetLightValue() {
 
 void loop()
 {
-  uduino.readSerial();
-
-  delay(50);
+  uduino.update();
+  delay(15);
 }
