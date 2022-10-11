@@ -30,33 +30,34 @@ namespace Rover.Arduino
             m_inputType = type;
             m_inputName = name;
 
-            UduinoManager.Instance.OnBoardConnected += OnBoardConnected;
-
             ArduinoInputDatabase.RegisterInput(this);
         }
 
-        private void OnBoardConnected(UduinoDevice device)
+        public void SetupInputPins(UduinoDevice device)
         {
             m_device = device;
 
             switch(m_inputType)
             {
                 case InputType.Digital:
-                    UduinoManager.Instance.pinMode(m_pin, PinMode.Input_pullup);
+                    UduinoManager.Instance.pinMode(m_pin, PinMode.Input);
                     break;
                 case InputType.Analog:
                     UduinoManager.Instance.pinMode(m_pin, PinMode.Input);
                     break;
             }
 
-            m_inputUpdateTimer = Timer.Register(GameSettings.INPUT_TIMER_DELAY, () => ArduinoInputUpdate(), isLooped: true);
+            //m_inputUpdateTimer = Timer.Register(GameSettings.INPUT_TIMER_DELAY, () => ArduinoInputUpdate(), isLooped: true);
             
-            if(!m_inputEnabled)
-                DisableInput();
+            // if(!m_inputEnabled)
+            //     DisableInput();
         }
 
-        private void ArduinoInputUpdate()
+        public void CheckInputValue()
         {   
+            if(!m_inputEnabled)
+                return;
+
             switch(m_inputType)
             {
                 case InputType.Digital:
@@ -72,21 +73,21 @@ namespace Rover.Arduino
         {
             m_inputEnabled = true;
 
-            if(m_inputUpdateTimer != null)
-                m_inputUpdateTimer.Resume();
+            // if(m_inputUpdateTimer != null)
+            //     m_inputUpdateTimer.Resume();
         }
 
         public void DisableInput()
         {
             m_inputEnabled = false;
 
-            if(m_inputUpdateTimer != null)
-                m_inputUpdateTimer.Pause();
+            // if(m_inputUpdateTimer != null)
+            //     m_inputUpdateTimer.Pause();
         }
 
         private void ReadDigitalInput()
         {
-            float currentValue = (float)UduinoManager.Instance.digitalRead(m_pin);
+            float currentValue = (float)UduinoManager.Instance.digitalRead(m_pin, GameSettings.INPUT_BUNDLE_NAME);
 
             if(currentValue != m_oldValue)
             {
@@ -101,7 +102,7 @@ namespace Rover.Arduino
 
         private void ReadAnalogInput()
         {
-            float currentValue = UduinoManager.Instance.analogRead(m_pin);
+            float currentValue = UduinoManager.Instance.analogRead(m_pin, GameSettings.INPUT_BUNDLE_NAME);
 
             if(currentValue != m_oldValue)
             {
@@ -113,15 +114,56 @@ namespace Rover.Arduino
 
     public static class ArduinoInputDatabase
     {
-        public static List<ArduinoInput> arduinoInputs = new List<ArduinoInput>();
+        private static List<ArduinoInput> m_arduinoInputs = new List<ArduinoInput>();
+        public static List<ArduinoInput> ArduinoInputs { get {return m_arduinoInputs;} }
+        public static event Action EOnInputReadUpdate;
+        private static Timer inputUpdateTimer;
 
+        static ArduinoInputDatabase()
+        {
+            UduinoManager.Instance.OnBoardConnected += OnBoardConnected;
+        }
+
+        private static void OnBoardConnected(UduinoDevice device)
+        {
+            foreach(ArduinoInput input in m_arduinoInputs)
+            {
+                input.SetupInputPins(device);
+            }
+
+            inputUpdateTimer = Timer.Register(GameSettings.INPUT_TIMER_DELAY, () => {OnInputReadTimerUpdate();}, isLooped: true);
+        }
+
+        private static void OnInputReadTimerUpdate()
+        {
+            foreach(ArduinoInput input in m_arduinoInputs)
+            {
+                input.CheckInputValue();
+            }
+
+            UduinoManager.Instance.SendBundle(GameSettings.INPUT_BUNDLE_NAME);
+        }
 
         public static void RegisterInput(ArduinoInput input)
         {
-            if(arduinoInputs.IndexOf(input) == -1)
+            if(m_arduinoInputs.IndexOf(input) == -1)
             {
-                arduinoInputs.Add(input);
+                m_arduinoInputs.Add(input);
             }
+        }
+    }
+
+    public static class ArduinoInputDecoder
+    {
+        public static event Action<string> EOnSerialMessageRecieved;
+        static ArduinoInputDecoder()
+        {
+            UduinoManager.Instance.OnDataReceived += OnMessageReceived;
+        }
+
+        private static void OnMessageReceived(string data, UduinoDevice device)
+        {
+            EOnSerialMessageRecieved?.Invoke(data);
         }
     }
 }

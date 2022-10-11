@@ -8,9 +8,11 @@ public class UduinoTestScriptVersion2 : MonoBehaviour
 {
     private ArduinoInput buttonTestInput;
     private ArduinoInput testInput2;
+    private ArduinoInput testInput3;
+    private ArduinoInput testInput4;
 
     private List<ArduinoInput> inputs = new List<ArduinoInput>();
-    private List<int> ledPins = new List<int>() {52, 50};
+    private List<int> ledPins = new List<int>() {52, 50, 48, 46};
     private int ledPin = 52;
     private bool pressed;
 
@@ -18,9 +20,14 @@ public class UduinoTestScriptVersion2 : MonoBehaviour
     {
         buttonTestInput = new ArduinoInput(InputType.Digital, 53, "Button Test Input");
         testInput2 = new ArduinoInput(InputType.Digital, 51, "Test Input 2");
+        testInput3 = new ArduinoInput(InputType.Digital, 49, "Test Input 3");
+        testInput4 = new ArduinoInput(InputType.Digital, 47, "Test Input 4");
+
 
         inputs.Add(buttonTestInput);
         inputs.Add(testInput2);
+        inputs.Add(testInput3);
+        inputs.Add(testInput4);
 
         UduinoManager.Instance.OnBoardConnected += OnBoardConnected;
 
