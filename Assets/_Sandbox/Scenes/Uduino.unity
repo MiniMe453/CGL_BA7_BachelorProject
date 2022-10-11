@@ -354,6 +354,7 @@ GameObject:
   - component: {fileID: 1056609673}
   - component: {fileID: 1056609672}
   - component: {fileID: 1056609674}
+  - component: {fileID: 1056609675}
   m_Layer: 0
   m_Name: TestGameObject
   m_TagString: Untagged
@@ -399,6 +400,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c965e00df2343c419942d5e00834cb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1056609675
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1056609671}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17962f1965d16a74ea32741ec008316f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ledPins: 3400000032000000300000002e000000
 --- !u!1001 &1532284766
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -456,7 +470,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114023058375386772, guid: bb5e6aea88a650f4a8317e74940b0ea4, type: 3}
       propertyPath: ManagerState
-      value: 2
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114023058375386772, guid: bb5e6aea88a650f4a8317e74940b0ea4, type: 3}
+      propertyPath: limitSendRate
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114023058375386772, guid: bb5e6aea88a650f4a8317e74940b0ea4, type: 3}
       propertyPath: pins.Array.size
@@ -465,6 +483,10 @@ PrefabInstance:
     - target: {fileID: 114023058375386772, guid: bb5e6aea88a650f4a8317e74940b0ea4, type: 3}
       propertyPath: shouldReconnect
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114023058375386772, guid: bb5e6aea88a650f4a8317e74940b0ea4, type: 3}
+      propertyPath: threadIdleDelay
+      value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 114023058375386772, guid: bb5e6aea88a650f4a8317e74940b0ea4, type: 3}
       propertyPath: delayBeforeDiscover
@@ -553,6 +575,14 @@ PrefabInstance:
     - target: {fileID: 114023058375386772, guid: bb5e6aea88a650f4a8317e74940b0ea4, type: 3}
       propertyPath: pins.Array.data[2].lastReadValue
       value: 273
+      objectReference: {fileID: 0}
+    - target: {fileID: 114023058375386772, guid: bb5e6aea88a650f4a8317e74940b0ea4, type: 3}
+      propertyPath: presentExtentionsMap.keys.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114023058375386772, guid: bb5e6aea88a650f4a8317e74940b0ea4, type: 3}
+      propertyPath: presentExtentionsMap.values.Array.size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114023058375386772, guid: bb5e6aea88a650f4a8317e74940b0ea4, type: 3}
       propertyPath: activeExtentionsMap.values.Array.data[0]

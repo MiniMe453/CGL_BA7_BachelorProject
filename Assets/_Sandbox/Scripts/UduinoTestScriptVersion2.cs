@@ -18,10 +18,10 @@ public class UduinoTestScriptVersion2 : MonoBehaviour
 
     void Start()
     {
-        buttonTestInput = new ArduinoInput(InputType.Digital, 53, "Button Test Input");
-        testInput2 = new ArduinoInput(InputType.Digital, 51, "Test Input 2");
-        testInput3 = new ArduinoInput(InputType.Digital, 49, "Test Input 3");
-        testInput4 = new ArduinoInput(InputType.Digital, 47, "Test Input 4");
+        buttonTestInput = new ArduinoInput(InputType.Digital, 53, 0, "Button Test Input");
+        testInput2 = new ArduinoInput(InputType.Digital, 51, 1, "Test Input 2");
+        testInput3 = new ArduinoInput(InputType.Digital, 49, 2, "Test Input 3");
+        testInput4 = new ArduinoInput(InputType.Digital, 47, 3, "Test Input 4");
 
 
         inputs.Add(buttonTestInput);
@@ -47,6 +47,8 @@ public class UduinoTestScriptVersion2 : MonoBehaviour
             UduinoManager.Instance.digitalWrite(i, 0);
         }
         
+        //This doesn't work because we need to manually send and decode the data from here
+        //We aren't using the default Uduion sketch anymore.
         UduinoManager.Instance.digitalWrite(ledPins[0], 255);
 
         Debug.Log("Connected");
@@ -60,22 +62,13 @@ public class UduinoTestScriptVersion2 : MonoBehaviour
         }
     }
 
-    void OnButton1Pressed()
-    {
-
-    }
-
-    void OnButton2Pressed()
-    {
-
-    }
-
     private void OnButtonPressed(int pin)
     {
         foreach(int i in ledPins)
         {
             if(i == pin - 1)
             {
+                Debug.Log("Button with pin number " + pin.ToString() + " was pressed!");
                 UduinoManager.Instance.digitalWrite(i, 255);
             }
             else
