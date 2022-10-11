@@ -12,8 +12,8 @@ namespace Rover.Arduino
     public class ArduinoInput
     {
         public event Action<float> EOnValueChanged;
-        public event Action EOnButtonPressed;
-        public event Action EOnButtonReleased;
+        public event Action<int> EOnButtonPressed;
+        public event Action<int> EOnButtonReleased;
         private InputType m_inputType;
         public InputType InputType {get {return m_inputType;} }
         private Timer m_inputUpdateTimer;
@@ -87,15 +87,13 @@ namespace Rover.Arduino
         private void ReadDigitalInput()
         {
             float currentValue = (float)UduinoManager.Instance.digitalRead(m_pin);
-            
-            Debug.Log(currentValue);
 
             if(currentValue != m_oldValue)
             {
                 if(currentValue == 1f)
-                    EOnButtonPressed?.Invoke();
+                    EOnButtonPressed?.Invoke(m_pin);
                 else
-                    EOnButtonReleased?.Invoke();
+                    EOnButtonReleased?.Invoke(m_pin);
 
                 m_oldValue = currentValue;
             }
