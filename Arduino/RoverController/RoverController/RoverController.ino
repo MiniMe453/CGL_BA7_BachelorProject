@@ -2,7 +2,8 @@
 Uduino uduino("RoverController");
 
 int buttonInputPins[] = {53, 51, 49, 47};
-int ledOutputPins[] = {52, 50, 48, 46};
+int ledOutputPins[] = {22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52};
+
 
 void setup() {
   Serial.begin(9600);
@@ -10,8 +11,14 @@ void setup() {
   for(int i = 0;i<4;i++)
   {
     pinMode(buttonInputPins[i], INPUT_PULLUP);
+  }
+
+  for(int i = 0;i<16;i++)
+  {
     pinMode(ledOutputPins[i], OUTPUT);
   }
+
+  uduino.addCommand("led", SetLEDPins);
 }
 
 void loop() {
@@ -35,4 +42,22 @@ void loop() {
 **/
   uduino.println(serialLine);
   uduino.delay(15);
+}
+
+void SetLEDPins()
+{
+  int numOfParams = uduino.getNumberOfParameters();
+  char *arg;
+  arg = uduino.next();
+
+  if(numOfParams > 0)
+  {
+    for(int i = 0;i<numOfParams;i++)
+    {
+      if(arg != NULL)
+        digitalWrite(ledOutputPins[i], uduino.charToInt(arg));
+
+      arg = uduino.next();
+    }
+  }
 }
