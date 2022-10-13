@@ -13,8 +13,6 @@ public class UduinoTestScriptVersion2 : MonoBehaviour
 
     private List<ArduinoInput> inputs = new List<ArduinoInput>();
     private List<int> ledPins = new List<int>() {52, 50, 48, 46};
-    private int ledPin = 52;
-    private bool pressed;
 
     void Start()
     {
@@ -43,13 +41,12 @@ public class UduinoTestScriptVersion2 : MonoBehaviour
     {
         foreach(int i in ledPins)
         {
-            Uduino.UduinoManager.Instance.pinMode(i, PinMode.Output); 
-            UduinoManager.Instance.digitalWrite(i, 0);
+            LEDManager.SetLEDMode(i, 0);
         }
         
         //This doesn't work because we need to manually send and decode the data from here
         //We aren't using the default Uduion sketch anymore.
-        UduinoManager.Instance.digitalWrite(ledPins[0], 255);
+        LEDManager.SetLEDMode(ledPins[0], 1);
 
         Debug.Log("Connected");
     }
@@ -69,27 +66,12 @@ public class UduinoTestScriptVersion2 : MonoBehaviour
             if(i == pin - 1)
             {
                 Debug.Log("Button with pin number " + pin.ToString() + " was pressed!");
-                UduinoManager.Instance.digitalWrite(i, 255);
+                LEDManager.SetLEDMode(i, 1);
             }
             else
             {
-                UduinoManager.Instance.digitalWrite(i, 0);
+                LEDManager.SetLEDMode(i, 0);
             }
         }
     }
-
-    // private void OnButtonReleased(int pin)
-    // {
-    //     Debug.Log("Button released!");
-    //                 UduinoManager.Instance.digitalWrite(ledPin, 0);
-    //     pressed = false;
-    // }
-
-//     void Update()
-//     {
-//         if(pressed)
-// x
-//         else
-
-//     }
 }

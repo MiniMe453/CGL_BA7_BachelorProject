@@ -48,11 +48,6 @@ namespace Rover.Arduino
                     UduinoManager.Instance.pinMode(m_pin, PinMode.Input);
                     break;
             }
-
-            //m_inputUpdateTimer = Timer.Register(GameSettings.INPUT_TIMER_DELAY, () => ArduinoInputUpdate(), isLooped: true);
-            
-            // if(!m_inputEnabled)
-            //     DisableInput();
         }
 
         public void CheckInputValue()
@@ -74,17 +69,11 @@ namespace Rover.Arduino
         public void EnableInput()
         {
             m_inputEnabled = true;
-
-            // if(m_inputUpdateTimer != null)
-            //     m_inputUpdateTimer.Resume();
         }
 
         public void DisableInput()
         {
             m_inputEnabled = false;
-
-            // if(m_inputUpdateTimer != null)
-            //     m_inputUpdateTimer.Pause();
         }
 
         private void ReadDigitalInput()
@@ -143,8 +132,6 @@ namespace Rover.Arduino
             {
                 input.CheckInputValue();
             }
-
-            UduinoManager.Instance.SendBundle(GameSettings.INPUT_BUNDLE_NAME);
         }
 
         public static void RegisterInput(ArduinoInput input)

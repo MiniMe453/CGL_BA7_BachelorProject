@@ -355,6 +355,7 @@ GameObject:
   - component: {fileID: 1056609672}
   - component: {fileID: 1056609674}
   - component: {fileID: 1056609675}
+  - component: {fileID: 1056609676}
   m_Layer: 0
   m_Name: TestGameObject
   m_TagString: Untagged
@@ -413,6 +414,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ledPins: 3400000032000000300000002e000000
+--- !u!114 &1056609676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1056609671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4253f09376a2c6c4abddd784bf037827, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1532284766
 PrefabInstance:
   m_ObjectHideFlags: 0
