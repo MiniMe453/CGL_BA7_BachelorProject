@@ -1,14 +1,15 @@
 #include<Uduino.h>
 Uduino uduino("RoverController");
 
-int buttonInputPins[] = {53, 51, 49, 47};
+int buttonInputPins[] = {53, 51, 49, 47, 45};
+int numOfDigitalInputs = 5;
 int ledOutputPins[] = {22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52};
 
 
 void setup() {
   Serial.begin(9600);
 
-  for(int i = 0;i<4;i++)
+  for(int i = 0;i<numOfDigitalInputs;i++)
   {
     pinMode(buttonInputPins[i], INPUT_PULLUP);
   }
@@ -26,7 +27,7 @@ void loop() {
 
   String serialLine = "_";
 
-  for(int i = 0;i<4;i++)
+  for(int i = 0;i<numOfDigitalInputs;i++)
   {
     serialLine += String(digitalRead(buttonInputPins[i]));
   }

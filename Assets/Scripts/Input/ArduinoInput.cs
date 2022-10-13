@@ -82,7 +82,6 @@ namespace Rover.Arduino
                 return;
 
             float currentValue = float.Parse(ArduinoInputDecoder.LastMessage[m_id].ToString());
-            Debug.Log(currentValue);
 
             if(currentValue != m_oldValue)
             {
