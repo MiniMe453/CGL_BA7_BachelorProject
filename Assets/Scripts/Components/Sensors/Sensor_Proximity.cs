@@ -11,62 +11,67 @@ namespace Rover.Systems
     {
         private int[] m_ledPins = { 22, 24, 26, 28 };
         private int[] m_ledPinStates = { 0, 0, 0, 0 };
-        public int numOfCasts = 16;
-        public float sphereRadius = 2;
-        public float castDistance = 10;
         private Timer m_proximityTimer;
-        private float m_angleIncrement;
-        private int m_numOfCastsPerDirection;
         private List<GameObject> objectsInRange = new List<GameObject>();
 
         void Start()
         {
             m_proximityTimer = Timer.Register(GameSettings.PROXIMITY_CHECK_DELAY, () => CheckRoverProximity(), isLooped: true);
-            m_angleIncrement = 360f / numOfCasts;
-            m_numOfCastsPerDirection = numOfCasts / 4;
         }
 
         void CheckRoverProximity()
         {
+            float angle = 0f;
             bool sensorActivated = false;
+            m_ledPinStates = new int[] { 0, 0, 0, 0 };
 
-            for (int i = 0; i < numOfCasts; i++)
+            if (objectsInRange.Count > 0)
             {
-                RaycastHit hit;
+                sensorActivated = true;
 
-                if (Physics.SphereCast(transform.position, sphereRadius, Quaternion.AngleAxis((i * m_angleIncrement) - Mathf.CeilToInt(m_numOfCastsPerDirection / 2), Vector3.up) * transform.forward, out hit, castDistance))
+                foreach (GameObject obj in objectsInRange)
                 {
-                    sensorActivated = true;
+                    Vector2 playerPos = new Vector2(transform.forward.x, transform.forward.z);
+                    Vector2 objPos = new Vector2(obj.transform.position.x, obj.transform.position.z);
 
-                    if (i >= 0 && i < (m_numOfCastsPerDirection - 1))
-                        SetLEDPinStates(1, 0, 0, 0);
-                    else if (i >= m_numOfCastsPerDirection && i <= m_numOfCastsPerDirection * 2 - 1)
-                        SetLEDPinStates(0, 1, 0, 0);
-                    else if (i >= m_numOfCastsPerDirection * 2 && i <= m_numOfCastsPerDirection * 3 - 1)
-                        SetLEDPinStates(0, 0, 1, 0);
-                    else if (i >= m_numOfCastsPerDirection * 3 && i <= m_numOfCastsPerDirection * 4 - 1)
-                        SetLEDPinStates(0, 0, 0, 1);
+                    float angle_a = Mathf.Atan2(playerPos.y, playerPos.x);
+                    float angle_b = Mathf.Atan2(objPos.y, objPos.x);
 
-                    Debug.LogError(m_ledPinStates);
-                    break;
+                    angle = angle_b - angle_a;
+
+                    if (angle < Mathf.PI / 4 && angle > -Mathf.PI / 4 && m_ledPinStates[0] != 1)
+                        SetLEDPinStates(0, 1);
+                    if (angle > Mathf.PI / 4 && angle < (Mathf.PI / 4) * 3 && m_ledPinStates[1] != 1)
+                        SetLEDPinStates(1, 1);
+                    if (angle > (Mathf.PI / 4) * 3 || angle < (-Mathf.PI / 4) * 3 && m_ledPinStates[2] != 1)
+                        SetLEDPinStates(2, 1);
+                    if (angle > (-Mathf.PI / 4) * 3 && angle < -Mathf.PI / 4 && m_ledPinStates[3] != 1)
+                        SetLEDPinStates(3, 1);
                 }
             }
 
             if (sensorActivated)
                 LEDManager.SetLEDMode(m_ledPins, m_ledPinStates);
+            else if (m_ledPinStates != new int[] { 0, 0, 0, 0 })
+            {
+                m_ledPinStates = new int[] { 0, 0, 0, 0 };
+                LEDManager.SetLEDMode(m_ledPins, m_ledPinStates);
+            }
         }
 
-        private void SetLEDPinStates(int front, int right, int back, int left)
+        private void SetLEDPinStates(int index, int value)
         {
-            m_ledPinStates[0] = front;
-            m_ledPinStates[1] = right;
-            m_ledPinStates[2] = back;
-            m_ledPinStates[3] = left;
+            m_ledPinStates[index] = value;
         }
 
         void OnTriggerEnter(Collider other)
         {
             objectsInRange.Add(other.gameObject);
+        }
+
+        void OnTriggerExit(Collider other)
+        {
+            objectsInRange.Remove(other.gameObject);
         }
     }
 }
