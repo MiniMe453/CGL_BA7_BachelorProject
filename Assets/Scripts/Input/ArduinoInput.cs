@@ -78,6 +78,9 @@ namespace Rover.Arduino
 
         private void ReadDigitalInput()
         {
+            if(ArduinoInputDecoder.LastMessage.Length <= 0)
+                return;
+
             float currentValue = float.Parse(ArduinoInputDecoder.LastMessage[m_id].ToString());
             Debug.Log(currentValue);
 
