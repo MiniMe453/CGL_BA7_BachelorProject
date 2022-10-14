@@ -130,6 +130,9 @@ namespace Rover.Arduino
 
         private static void OnInputReadTimerUpdate()
         {
+            if(!Rover.OS.OperatingSystem.AllowUserControl)
+                return;
+
             foreach(ArduinoInput input in m_arduinoInputs)
             {
                 input.CheckInputValue();

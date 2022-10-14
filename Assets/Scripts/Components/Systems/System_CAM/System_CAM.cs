@@ -3,22 +3,35 @@ using System.Collections.Generic;
 using UnityEngine;
 using Rover.Arduino;
 using Uduino;
+using Rover.Settings;
+using Rover.Can;
+using Rover.DateTime;
+using System.Collections.Specialized;
 
 namespace Rover.Systems
 {
     public enum CameraMode {Cam1, Cam2, Cam3, Cam4};
-    public class System_CAM : MonoBehaviour
+
+    public struct Struct_CameraPhoto
     {
-        private static CameraMode m_cameraMode;
+        public string name;
+        public Texture2D photo;
+    }
+    public class System_CAM : MonoBehaviourCan
+    {
+        private static CameraMode m_cameraMode = CameraMode.Cam1;
         public static CameraMode SelectedCameraMode {get {return m_cameraMode;}}
         private ArduinoInput m_Cam1Button;
         private ArduinoInput m_Cam2Button;
         private ArduinoInput m_Cam3Button;
         private ArduinoInput m_Cam4Button;
         private ArduinoInput m_CapturePhotoButton;
-
         private List<ArduinoInput> inputs = new List<ArduinoInput>();
         private List<int> m_ledPins = new List<int>() {52, 50, 48, 46};
+        public List<Camera> cameraList;
+        private static int m_screenshotCount;
+        public List<Struct_CameraPhoto> m_photos = new List<Struct_CameraPhoto>();
+        private CanNode m_canNode = new CanNode(0x2000, "Camera System", CanNetwork.Can0);
 
         void Start()
         {
@@ -27,7 +40,6 @@ namespace Rover.Systems
             m_Cam3Button = new ArduinoInput(InputType.Digital, 49, 2, "Cam 3 Button");
             m_Cam4Button = new ArduinoInput(InputType.Digital, 47, 3, "Cam 4 Button");
             m_CapturePhotoButton = new ArduinoInput(InputType.Digital, 45, 4, "Take Photo Button");
-
 
             inputs.Add(m_Cam1Button);
             inputs.Add(m_Cam2Button);
@@ -54,7 +66,7 @@ namespace Rover.Systems
             
             //This doesn't work because we need to manually send and decode the data from here
             //We aren't using the default Uduion sketch anymore.
-            LEDManager.SetLEDMode(m_ledPins[0], 1);
+            SelectNewCameraMode(CameraMode.Cam1);
 
             Debug.Log("Connected");
         }
@@ -90,7 +102,41 @@ namespace Rover.Systems
             }
 
                 
-            Debug.Log("Start showing the picture!");
+            TakeCameraPhoto(cameraList[(int)m_cameraMode]);
+        }
+
+        void TakeCameraPhoto(Camera selectedCamera)
+        {
+            m_screenshotCount++;
+            selectedCamera.gameObject.SetActive(true);
+
+            RenderTexture rt = new RenderTexture(GameSettings.GAME_RES_X, GameSettings.GAME_RES_Y, 24);
+            selectedCamera.targetTexture = rt;
+            Texture2D cameraPhoto = new Texture2D(GameSettings.GAME_RES_X, GameSettings.GAME_RES_Y, TextureFormat.RGB24, false);
+            selectedCamera.Render();
+            RenderTexture.active = rt;
+            
+            cameraPhoto.ReadPixels(new Rect(0,0,GameSettings.GAME_RES_X, GameSettings.GAME_RES_Y),0,0);
+            cameraPhoto.Apply();
+
+            string photoName = $"{m_cameraMode.ToString()}_{TimeManager.TimeToStringTime(TimeManager.GetCurrentDateTime(), "_")}_{m_screenshotCount.ToString("000")}";
+
+            Struct_CameraPhoto photoMetadata = new Struct_CameraPhoto();
+            photoMetadata.name = photoName;
+            photoMetadata.photo = cameraPhoto;
+
+            m_photos.Add(photoMetadata);
+
+            selectedCamera.targetTexture = null;
+            RenderTexture.active = null;
+            selectedCamera.gameObject.SetActive(false);
+            Destroy(rt);
+
+            CanFrame frame = new CanFrame();
+            frame.data = new object[] {};
+            frame.nodeID = CanIDs.SYSTEM_CAM;
+            frame.timestamp = TimeManager.GetCurrentDateTime();
+            CanNetwork.Can0.SendCANFrame(frame);
         }
     }
 

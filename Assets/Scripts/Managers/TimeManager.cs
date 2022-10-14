@@ -70,66 +70,30 @@ namespace Rover.DateTime
 
         public static string TimeToStringFull(DateTimeStruct dateTimeStruct)
         {
-            string year = dateTimeStruct.Years.ToString();
-            string day = dateTimeStruct.Days.ToString();
-            string hour = dateTimeStruct.Hours.ToString();
-            string minute = dateTimeStruct.Minutes.ToString();
-            string seconds = dateTimeStruct.Seconds.ToString();
-
-            if (dateTimeStruct.Hours < 10)
-                hour = "0" + hour;
-
-            if (dateTimeStruct.Minutes < 10)
-                minute = "0" + minute;
-
-            if (dateTimeStruct.Seconds < 10)
-                seconds = "0" + seconds;
-
-            if (dateTimeStruct.Days < 10)
-                day = "00" + day;
-            else if (dateTimeStruct.Days < 100)
-                day = "0" + day;
-
-            if (dateTimeStruct.Years < 10)
-                year = "0" + year;
-
+            string year = dateTimeStruct.Years.ToString("00");
+            string day = dateTimeStruct.Days.ToString("000");
+            string hour = dateTimeStruct.Hours.ToString("00");
+            string minute = dateTimeStruct.Minutes.ToString("00");
+            string seconds = dateTimeStruct.Seconds.ToString("00");
 
             return year + "y, " + day + "d, " + hour + ":" + minute + ":" + seconds;
         }
 
         public static string TimeToStringYD(DateTimeStruct dateTimeStruct)
         {
-            string year = dateTimeStruct.Years.ToString();
-            string day = dateTimeStruct.Days.ToString();
-
-            if (dateTimeStruct.Days < 10)
-                day = "00" + day;
-            else if (dateTimeStruct.Days < 100)
-                day = "0" + day;
-
-            if (dateTimeStruct.Years < 10)
-                year = "0" + year;
+            string year = dateTimeStruct.Years.ToString("00");
+            string day = dateTimeStruct.Days.ToString("000");
 
             return year + "y, " + day + "d";
         }
 
-        public static string TimeToStringTime(DateTimeStruct dateTimeStruct)
+        public static string TimeToStringTime(DateTimeStruct dateTimeStruct, string splitChar = ":")
         {
-            string hour = dateTimeStruct.Hours.ToString();
-            string minute = dateTimeStruct.Minutes.ToString();
-            string seconds = dateTimeStruct.Seconds.ToString();
+            string hour = dateTimeStruct.Hours.ToString("00");
+            string minute = dateTimeStruct.Minutes.ToString("00");
+            string seconds = dateTimeStruct.Seconds.ToString("00");
 
-            if (dateTimeStruct.Hours < 10)
-                hour = "0" + hour;
-
-            if (dateTimeStruct.Minutes < 10)
-                minute = "0" + minute;
-
-            if (dateTimeStruct.Seconds < 10)
-                seconds = "0" + seconds;
-
-
-            return hour + ":" + minute + ":" + seconds;
+            return hour + splitChar + minute + splitChar + seconds;
         }
 
         public static DateTimeStruct GetCurrentDateTime()

@@ -47,17 +47,17 @@ namespace Rover.Can
         public float TimeSinceLastMessage { get { return m_timeSinceLastMesssage; } }
         private MonoBehaviourCan parent;
 
-        public CanNode(ushort m_canID, string m_nodeName, CanChannel canChannel, MonoBehaviourCan parentClass, bool m_receiveCanFrame = true)
+        public CanNode(ushort m_canID, string m_nodeName, CanChannel canChannel, MonoBehaviourCan parentClass = null, bool m_receiveCanFrame = true)
         {
             m_id = m_canID;
             m_m_nodeName = m_nodeName;
-            parent = parentClass;
+            // parent = parentClass;
             channel = canChannel;
             channel.AddCANNode(this);
 
             if (m_receiveCanFrame)
             {
-                parentClass.EOnFixedUpdate += OnFixedUpdate;
+                // parentClass.EOnFixedUpdate += OnFixedUpdate;
                 channel.CAN_MESSAGE_RECIEVED += ReadCANFrame;
             }
 
@@ -95,14 +95,14 @@ namespace Rover.Can
 
         private void ReadCANFrame(CanFrame frame)
         {
-            if (!m_messageMask.Contains(frame.nodeID))
-            {
-                Debug.LogWarning($"{parent.name} recieved a message, but the message mask has not been set up properly!");
-                return;
-            }
+            // if (!m_messageMask.Contains(frame.nodeID))
+            // {
+            //     Debug.LogWarning($"{parent.name} recieved a message, but the message mask has not been set up properly!");
+            //     return;
+            // }
 
-            parent.OnCANFrameRecieved(frame);
-            m_timeSinceLastMesssage = 0f;
+            // parent.OnCANFrameRecieved(frame);
+            // m_timeSinceLastMesssage = 0f;
         }
 
         ///<summary>
