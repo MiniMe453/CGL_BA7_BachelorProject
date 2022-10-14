@@ -17,10 +17,13 @@ namespace Rover.OS
         public Canvas canvas;
         public System_CAM cameraSystem;
         public RawImage loadingPhoto;
+        public RectTransform loadingPhotoMask;
         public RawImage photo;
         public TextMeshProUGUI photoName;
         public GameObject overlay;
+        public Texture2D blackTexture;
         private int m_currentPhotoCount;
+        private Timer m_LoadPhotoTimer;
 
         protected override void Init()
         {
@@ -43,7 +46,7 @@ namespace Rover.OS
 
         protected override void OnAppLoaded()
         {
-            LoadPhoto(cameraSystem.m_photos.Count-1);
+            LoadPhoto(cameraSystem.m_photos.Count-1, true);
             m_currentPhotoCount = cameraSystem.m_photos.Count - 1;
             UIManager.AddToViewport(canvas, 100);
             OperatingSystem.SetUserControl(false);
@@ -55,15 +58,45 @@ namespace Rover.OS
             OperatingSystem.SetUserControl(true);
         }
 
-        private void LoadPhotoUpdate(float secondElapsed, bool loadFromInput = false)
+        private void LoadPhotoUpdate(float secondElapsed, Vector3 loadingPos, Vector3 loadingMaskPos,bool loadFirstPhoto = false)
         {
-            float percentage = secondElapsed / (loadFromInput? GameSettings.PHOTO_LOAD_TIME : GameSettings.PHOTO_VIEWER_LOAD_TIME);
+            float percentage = secondElapsed / (loadFirstPhoto? GameSettings.PHOTO_LOAD_TIME : GameSettings.PHOTO_VIEWER_LOAD_TIME);
+
+            if(loadFirstPhoto)
+            {
+                loadingPos.y = -500*percentage;
+                loadingPhoto.transform.localPosition = loadingPos;    
+            }
+            else
+            {
+                loadingMaskPos.y = -500*percentage;
+                loadingPos.y = 500*percentage;
+
+                loadingPhotoMask.localPosition = loadingMaskPos;
+                loadingPhoto.transform.localPosition = loadingPos;
+            }
         }
 
-        private void LoadPhoto(int index)
+        private void LoadPhoto(int index, bool loadFirstPhoto = false)
         {
+            overlay.SetActive(false);
+
+            loadingPhoto.transform.localPosition = Vector3.zero;
+            loadingPhoto.color = loadFirstPhoto? Color.black : Color.white;
+
+            loadingPhotoMask.transform.localPosition = Vector3.zero;
+
             photo.texture = cameraSystem.m_photos[index].photo;
             photoName.text = cameraSystem.m_photos[index].name;
+
+            if(m_LoadPhotoTimer != null)
+                m_LoadPhotoTimer.Cancel();
+
+            m_LoadPhotoTimer = Timer.Register(loadFirstPhoto? GameSettings.PHOTO_LOAD_TIME : GameSettings.PHOTO_VIEWER_LOAD_TIME, 
+                            onUpdate: secondsElapsed => LoadPhotoUpdate(secondsElapsed, Vector3.zero, Vector3.zero, loadFirstPhoto),
+                            onComplete: () => {
+                                overlay.SetActive(true);
+                            });
         }
 
         private void NavigateLeft(InputAction.CallbackContext callback)
@@ -73,17 +106,17 @@ namespace Rover.OS
 
             loadingPhoto.texture = cameraSystem.m_photos[m_currentPhotoCount].photo;
             m_currentPhotoCount++;
-            LoadPhoto(m_currentPhotoCount);
+            LoadPhoto(m_currentPhotoCount, false);
         }
 
         private void NavigateRight(InputAction.CallbackContext callback)
         {
             if(m_currentPhotoCount - 1 < 0 )
                 return;
-            
+
             loadingPhoto.texture = cameraSystem.m_photos[m_currentPhotoCount].photo;
             m_currentPhotoCount--;
-            LoadPhoto(m_currentPhotoCount);
+            LoadPhoto(m_currentPhotoCount, false);
         }
     }
 }
