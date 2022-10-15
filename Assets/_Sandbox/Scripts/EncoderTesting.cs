@@ -21,4 +21,26 @@ public class EncoderTesting : MonoBehaviour
     {
         Debug.LogError("Encoder Button Pressed");
     }
+
+    void FixedUpdate()
+    {
+        GetInput();
+        HandleMotor();
+        HandleSteering();
+    }
+
+    void GetInput()
+    {
+
+    }
+
+    void HandleMotor()
+    {
+
+    }
+
+    void HandleSteering()
+    {
+
+    }
 }

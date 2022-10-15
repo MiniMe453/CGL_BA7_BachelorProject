@@ -11,7 +11,7 @@ namespace Rover.Arduino
     public enum InputType {Digital, Analog};
     public class ArduinoInput
     {
-        public event Action<float> EOnValueChanged;
+        public event Action<float, int> EOnValueChanged;
         public event Action<int> EOnButtonPressed;
         public event Action<int> EOnButtonReleased;
         private InputType m_inputType;
@@ -37,17 +37,17 @@ namespace Rover.Arduino
 
         public void SetupInputPins(UduinoDevice device)
         {
-            m_device = device;
+            // m_device = device;
 
-            switch(m_inputType)
-            {
-                case InputType.Digital:
-                    UduinoManager.Instance.pinMode(m_pin, PinMode.Input);
-                    break;
-                case InputType.Analog:
-                    UduinoManager.Instance.pinMode(m_pin, PinMode.Input);
-                    break;
-            }
+            // switch(m_inputType)
+            // {
+            //     case InputType.Digital:
+            //         UduinoManager.Instance.pinMode(m_pin, PinMode.Input);
+            //         break;
+            //     case InputType.Analog:
+            //         UduinoManager.Instance.pinMode(m_pin, PinMode.Input);
+            //         break;
+            // }
         }
 
         public void CheckInputValue()
@@ -78,10 +78,10 @@ namespace Rover.Arduino
 
         private void ReadDigitalInput()
         {
-            if(ArduinoInputDecoder.LastMessage.Length <= 0)
+            if(ArduinoInputDecoder.LastMessage.Count <= 0)
                 return;
 
-            float currentValue = float.Parse(ArduinoInputDecoder.LastMessage[m_id].ToString());
+            float currentValue = float.Parse(ArduinoInputDecoder.LastMessage[0][m_id].ToString());
 
             if(currentValue != m_oldValue)
             {
@@ -96,11 +96,11 @@ namespace Rover.Arduino
 
         private void ReadAnalogInput()
         {
-            float currentValue = UduinoManager.Instance.analogRead(m_pin, GameSettings.INPUT_BUNDLE_NAME);
+            float currentValue = float.Parse(ArduinoInputDecoder.LastMessage[m_id].ToString());
 
             if(currentValue != m_oldValue)
             {
-                EOnValueChanged?.Invoke(currentValue);
+                EOnValueChanged?.Invoke(currentValue, m_pin);
                 m_oldValue = currentValue;
             }                
         }
@@ -151,8 +151,8 @@ namespace Rover.Arduino
     public static class ArduinoInputDecoder
     {
         public static event Action<string> EOnSerialMessageRecieved;
-        private static string m_lastMessage = "";
-        public static string LastMessage { get {return m_lastMessage;} }
+        private static List<string> m_lastMessage = new List<string>() {"","","",""};
+        public static List<string> LastMessage { get {return m_lastMessage;} }
         static ArduinoInputDecoder()
         {
             UduinoManager.Instance.OnDataReceived += OnMessageReceived;
@@ -160,7 +160,15 @@ namespace Rover.Arduino
 
         private static void OnMessageReceived(string data, UduinoDevice device)
         {
-            m_lastMessage = data.Remove(0,1);
+            data = data.Remove(0,1);
+
+            string[] split = data.Split(' ');
+
+            for(int i = 0; i<split.Length;i++)
+            {
+                m_lastMessage[i] = split[i];
+            }
+
             EOnSerialMessageRecieved?.Invoke(data);
         }
     }
