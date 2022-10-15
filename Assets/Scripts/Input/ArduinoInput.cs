@@ -23,7 +23,7 @@ namespace Rover.Arduino
         private string m_inputName;
         public string InputName {get {return m_inputName;} }
         private UduinoDevice m_device;
-        private bool m_inputEnabled;
+        private bool m_inputEnabled = true;
 
         public ArduinoInput(InputType type, int pin, int id, string name = "Arduino Input")
         {

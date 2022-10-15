@@ -20,7 +20,7 @@ namespace Rover.DateTime
         private static float m_timeScale = 1f;
         public static float TimeScale { get { return m_timeScale; } set { m_timeScale = value; } }
         public static DateTimeStruct dateTime;
-        public static event Action<string> EOnDateTimeUpdated;
+        public static event Action<DateTimeStruct> EOnDateTimeUpdated;
 
         static TimeManager()
         {
@@ -32,6 +32,7 @@ namespace Rover.DateTime
             tmp.Hours = 8;
             tmp.Minutes = 34;
             tmp.Seconds = 15;
+            Debug.LogError("Time manager initialized");
 
             dateTime = tmp;
         }
@@ -65,7 +66,7 @@ namespace Rover.DateTime
 
             dateTime = tmp;
 
-            EOnDateTimeUpdated?.Invoke(TimeToStringFull(dateTime));
+            EOnDateTimeUpdated?.Invoke(dateTime);
         }
 
         public static string TimeToStringFull(DateTimeStruct dateTimeStruct)

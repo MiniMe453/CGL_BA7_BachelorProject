@@ -28,9 +28,9 @@ public class TemperatureSensor_Reader : MonoBehaviourCan
         TimeManager.EOnDateTimeUpdated -= UpdateDateTimeText;
     }
 
-    private void UpdateDateTimeText(string newDateTime)
+    private void UpdateDateTimeText(DateTimeStruct newDateTime)
     {
-        dateTimeText.text = newDateTime;
+        dateTimeText.text = TimeManager.TimeToStringFull(newDateTime);
     }
     public override void OnCANFrameRecieved(CanFrame frame)
     {

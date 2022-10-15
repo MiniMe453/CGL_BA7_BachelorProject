@@ -9,7 +9,7 @@ public class roverchangemodetest : MonoBehaviour
     public InputActionMap actionMap;
     void Start()
     {
-        OperatingSystem.SetOSState(OSState.CommandLine);
+        OperatingSystem.SetOSState(OSState.RoverControl);
 
         actionMap["rvrMode"].performed += Action_Rover;
         actionMap["cmdMode"].performed += Action_CommandLine;

@@ -3,8 +3,8 @@
 #include<Uduino.h>
 Uduino uduino("RoverController");
 
-int buttonInputPins[] = {53, 51, 49, 47, 45, 11};
-int numOfDigitalInputs = 6;
+int buttonInputPins[] = {53, 51, 49, 47, 45, 11, 41, 39,37};
+int numOfDigitalInputs = 9;
 
 int analogInputPins[] = {A0, A1, A2};
 int numOfAnalogInputs = 3;
