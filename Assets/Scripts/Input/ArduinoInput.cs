@@ -151,7 +151,7 @@ namespace Rover.Arduino
     public static class ArduinoInputDecoder
     {
         public static event Action<string> EOnSerialMessageRecieved;
-        private static List<string> m_lastMessage = new List<string>() {"","","",""};
+        private static List<string> m_lastMessage = new List<string>() {"","","","",""};
         public static List<string> LastMessage { get {return m_lastMessage;} }
         static ArduinoInputDecoder()
         {

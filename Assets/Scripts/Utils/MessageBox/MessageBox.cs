@@ -49,7 +49,7 @@ namespace Rover.Interface
 
         public void HideMessageBox()
         {
-            Destroy(this.gameObject);
+            UIManager.RemoveFromViewport(canvas);
         }
 
         private void Input_OnConfirm(InputAction.CallbackContext context)

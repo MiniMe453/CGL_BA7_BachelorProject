@@ -6,7 +6,7 @@ using Uduino;
 using Rover.Settings;
 using Rover.Can;
 using Rover.DateTime;
-using System.Collections.Specialized;
+using Rover.Interface;
 
 namespace Rover.Systems
 {
@@ -102,7 +102,15 @@ namespace Rover.Systems
             }
 
                 
-            TakeCameraPhoto(cameraList[(int)m_cameraMode]);
+            if(System_MTR.RoverVelocity > 0.01)
+            {
+                Debug.Log(System_MTR.RoverVelocity);
+                UIManager.ShowMessageBox("STOP THE ROVER", Color.red, 1f);
+            }
+            else
+            {
+                TakeCameraPhoto(cameraList[(int)m_cameraMode]);
+            }
         }
 
         void TakeCameraPhoto(Camera selectedCamera)

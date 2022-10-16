@@ -1,0 +1,291 @@
+ 
+
+ 
+
+		--- this is the full documentation of Painter --- 
+
+ 
+
+ 
+
+1. Main - main systems: 
+
+	Painter - for painting on objects with objects: 
+		- paintmode - mode of painting: 
+			- scatter - paints in range of brush (with avoidance) 
+			- exact - paint on specific position 
+			- remove - remove painted objects 
+			- replace - replace placed objects with others 
+		- recordUndo - if should record undo entries 
+
+		- palette - prefabPalette used 
+		- specificIndex - if should spawn pecific index from palette. if <0 will spawn randomly
+
+		- holdActivation - if you hold, should spawn 
+		- holdActivationDistance - spawn if moved spawn pos by this distance 
+
+		- placeGridSize - place grid size (on x,z same). leave at 0 to disable
+		- heightSnap - height that placed obj should be snapped to. leave as Infintiy to disable
+
+		- brushSize - size of brush 
+
+		- scatterCount - count of attempts to spawn objects with scatter mode 
+		- scatterAvoidenceDistance - avoidance of scattered objects 
+
+		- findCount - count of removed objects per mouse action when removing 
+
+		- YRotationOffset - rotation offset of placed object on Y axis
+
+		- spawnPreview - if should spawn preview object, to see where, and how obj will be spawned better. keep in mnd this is not a 1:1 representation, as if you have minmax rand rot on palette, it may spawn diffriently etc
+
+
+	PhysicsPainter - spawns object, and simulates unity physics, letting it place them:
+		- recordUndo - if should record undo entries 
+
+		- palette - prefabPalette used 
+		- specificIndex - if should spawn pecific index from palette. if <0 will spawn randomly
+
+		- holdActivation - if you hold, should spawn 
+		- holdActivationDistance - spawn if moved spawn pos by this distance 
+
+		- upOffset - up offset of spawn to the paint position
+
+		- brushSize - size of brush 
+		- scatterCount - count of attempts to spawn objects
+		- scatterAvoidenceDistance - avoidance of scattered objects 
+
+		- keepInScene - if should keep simulated objects in scene, even if the rigidbody is sleeping (not moveing). if false, if object is not moveing, the system will remove it from scene
+		- simulationDelta - how ofte should simulation update realtime. this value is in miliseconds
+		- iterations - amount of iterations per physics refresh
+		- iterationStep - step for Physics.Simulate per iteration
+
+
+	BezierCurveSpawner - spawns objects/walls along a bezier curve:
+		- spawnType - what shoul the system spawn?
+
+		- wallPreset - used wallSettings 
+		- allowOverPaint - if should go further than picked position, to ensuer that the wall has indeed went threw it, and spawned when it was picked. this may resul in a lot of mess and inaccuracy
+
+		- palette - prefabPalette used 
+		- specificIndex - if should spawn pecific index from palette. if <0 will spawn randomly
+
+		- minSpawnDistance - min distanc between spawns (or their attempts)
+
+		- curveMode - curvature calculation used by the curve
+		- stepMode - how steps should be calculated
+		- curveSteps - accuracy of checking curve and distances
+
+		- curve - bezier curve's anchorSettings. the curve it self
+
+		- curveTangentMode - edit mode of tangents. automatic will place tangents for you, half manual, will let you mov them, while keeping  straight line with the other one, and manula doesnt give a f, and lets you do anything
+		- otherTangentMode - if used half manual mode, how should other tangent act when moving a tangent.
+		- previewSpawnBallsSize - size of a ball in place of a spawn
+
+
+
+	textSpawner - spawns 3d representation of string: 
+		- font - textFont (holder of representations) 
+
+		- text - string from which spawn the object 
+
+		- autoUpdate - if should automatically update written text. wrks only in the editor 
+
+		- asPrefab - if should spawn objects as prefabs
+		- addSpaceColliders - "if should add colliders when ' ' is wrote. good if you use text on text ground snapping
+
+		- betweenLettersSpace - size of a letter 
+		- spaceLengh - size of 'space'. when you press spacebar 
+		- enterLengh - size of \n 
+
+		- randPosAdd - random addon of position 
+		- randRotAdd - random addon of rotation 
+		- minMaxScale -min max scale (random between) 
+
+		- snapToGround - if should snap to ground 
+		- normalAllighn - amount of aligning to normal (lerp form v3.up to normal) 
+		- groundLayer - layer mask of ground 
+		- snapHeightOffset - height offset of snapped letter 
+		- snapRayDir - dir to snap 
+
+ 
+
+	stepManager - managers stepGenerator's: 
+		- steps - stepGenerator's activated when this stepManageractivates 
+		- maxTimeMilPerStep - max time of stepGenerator to last, else will be aborted 
+
+ 
+
+	stepGenerator - smart spawner: 
+		- stepSettingsSO - stepSettings that this spawner uses 
+
+		- minMaxCount - one iteration will have between these values of objects 
+
+		- iterations - amount of repeats this spawner goes threw 
+
+		- spawnChance - chance of an iteration 
+
+		- randPlacementRange - range of this spawner (xz/y) 
+
+		- minMaxStepSpawnDistance - min/max distance of spawns 
+		- maxStepSpawnDistanceToAll - if all should be in this distance to each other (closer than minMaxStepSpawnDistance.y, yet further than minMaxStepSpawnDistance.x) 
+
+		- heightOffset - height offset of a spawn 
+
+		- midIterAwait - if should avait for unity physics to update when doing next iteration 
+		- midSpawnAwait - if should avait for unity physics to update when doing next spawn 
+
+ 
+
+	GridSpawner - spawner spawning objects in grid: 
+		- palette - prefabPalette used 
+
+		- spawnChance - chance of individual object to spawn 
+
+		- randPosOffset - random offset on xz axes to spawn on 
+
+		- snapToGround - if should snap to ground 
+
+		- callOnSpawned - method called on spawned object 
+		- autoCallSpawners - if should call spawners that are being spawned (don't flag if you are not spawning spawners) 
+		- atOnceSpawners - spawners to run at once (more or less) 
+
+
+		- perLoopWait - await per this much loop repeats (smooths out spawning) 
+
+		- specificIndex - if should spawn pecific index from palette. if <0 will spawn randomly
+
+		- gridSettings - grid settings 
+
+
+
+	NoiseSpawner - spawner placing objects using noise: 
+		- spawnOnAwakeWithRandSeed - if should spawn on Awake with random seed 
+
+		- palette - prefabPalette used 
+
+		- noiseSpawnThreshold - min noise value to attempt spawning an object 
+		- spawnChance - spawn chance for each object 
+		- avoidienceDistance - min distance difference between 2 spawned objects. 0 to disable 
+		- addPosIfChanceFail - if should add the picked po to avoided pos list even if chance failed 
+
+		- placePosScale - position scale (makes stuff spawn further) 
+		- randPosOffset - random position offset 
+
+		- callOnSpawned - method called on spawned object 
+
+		- autoCallSpawners - if should call spawners that are being spawned (dont flag if you are not spawning spawners) 
+		- atOnceSpawners - spawners to run at once (more or less) 
+
+		- perLoopWait - await per this much loop repetes (smooths out spawning) 
+
+		- specificIndex - if should spawn pecific index from palette. if <0 will spawn randomly
+
+		- noiseSettings - perlin noise settings 
+
+
+
+
+	wallPainter - paints walls/fences 
+		- wallPreset - used wallSettings 
+
+		- AllowOverPaint - if should go further than clicked, to ensure, that wall was on clicked pos 
+
+		- recordUndo - if should record undo 
+
+
+	TerrainDetailPopulator - populates terrain with a specific detail layer, with avoidiance:
+		- detailILayer - index of a detail on details of terrain
+		- density - density of detail on a checked spot if decided to place detail there
+		- zeroChance - chance for a bland spot
+		- maxNormal - max normal angle of ground for detai to be placed
+		- minmaxHeight - min/max height of placed grass
+		- obstacles - obstacle layer. grass will not be spawned on spot covered by obstacles
+		- perYwait - for performace, await per outher loop repetes
+
+
+
+
+
+
+Profiles - scriptable objects: 
+
+	prefabPalette - contains settings of prefabs, and how they 'like' to be placed: 
+		- objects - possible spawns (prefabs) 
+
+		- spawnAsPrefab - if should spawn objects as prefabs. works only in the editor 
+
+		- snapChildren - if should snap objects children to ground 
+
+		- minMaxScale - min max (random between) scale of spawned object 
+		- randRotAdd - random rotation addon on axis 
+
+		- maxNormal - max normal angle to allow spawn 
+		- normalAllighn - lerp v3.up to normal with this value, to get the desired up of object 
+
+		- groundLayer - layer of ground to spawn on 
+		- avoidedLayer - layer to not spawn on 
+
+
+
+	wallSettings - preset of a wall to spawn with automatic wall generator 
+
+		- post - the standing thing, that is connected to one another through rails 
+
+		- rail - the thing connecting 2 posts horizontally if you do not use rails, railLen is still needed 
+		- railLengh - distance between 2 posts/length of a rail 
+		- railHeights - for each of these, on this height, there will be a rail placed on the post 
+
+		- picket - little things between posts pointing up 
+		- picketCount - count of pickets 
+
+		- spawnAsPrefab - if should spawn objects as prefabs 
+
+
+
+	stepSettings - settings for step generator 
+		- possibleSpawns - possible spawn objects 
+
+
+		- minMaxXZToYScale - min max (random value between) scale. xy in minmax on xz axes, while zw in minmax scale on y axis 
+		- sameScaleOnAllAxis -if all axis should have scaled applied same, from xy of minMaxXZToYScale 
+		- maxRandRotAdd - random rotation addon 
+		- localPlacementOffset - this is applied after rotating object 
+ 
+
+		- firstPlacePoints - am out of trial and error attempts when doing first spawn of iteration 
+		- closeByPlacePoints - am out of placement tries in not first iteration of step 
+
+		- onSurface - if should try to find surface to spawn on 
+
+
+		- placeRayMethod - ray method 
+		- icoSubdivisons - subdivisions of ico sphere casting rays 
+		- rayLengh - range of finding ground 
+
+		- groundLayer - layer to spawn on 
+		- avoidedLayer - layer not to spawn on 
+
+		- desiredNormalAngle - desired normal angle (angle between normal and v3.up) 
+		- normalAllighn - lerp v3.up to normal with this value, to get the desired up of object 
+		- normalIncorrectcionAcceptance - max normal angle difference to desiredNormalAngle 
+
+		- centerSideMove - move points to center/side of spawn space 
+
+		- freeTightPlacePreference - if prefer to spawn in a free, or tight space  
+		- minMaxNearObjects - min max amount of objects nearby, to allow this place 
+		- colFindRange - range of finding colliders used in determining tight/free space 
+		- objectsLayer - layer of objects to find when trying to get tight/free space 
+
+		- placePreferenceWeight - weight of place preference 
+		- placeWeightRandAddon - a value between -this to this is going to be added to calculated weight of placement 
+		- normalAccuracyWeight - weight of normal preference 
+		- normalWeightRandAddon - a value between -this to this is going to be added to calculated weight of placement 
+
+
+	textFont - 3D text info 
+		- fontLetters - letter info 
+
+		- letter - letter setting: 
+			- letters - list of strings (that must be one char long), that will activate spawning of this representation 
+
+			- representation - representation of this letter 

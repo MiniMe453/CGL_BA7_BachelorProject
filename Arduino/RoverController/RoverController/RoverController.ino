@@ -15,8 +15,22 @@ int ledOutputPins[] = {22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 5
 int rotaryAPin = 12;
 int rotaryBPin = 13;
 int counter = 0;
+bool interruptCalled = false;
+unsigned long timeSinceLastInterrupt;
+unsigned long timeSinceLastMessage;
+unsigned long interruptResetDelay = 25;
+unsigned long messageDelay = 50;
+
 int aState;
 int aLastState;
+
+int aPinCounter;
+int aPinCurrentState= LOW;
+int aPinReading;
+int bPinCounter;
+int bPinCurrentState = LOW;
+int bPinReading;
+int debounce_count = 2;
 
 
 void setup() {
@@ -39,8 +53,21 @@ void setup() {
 }
 
 void loop() {
-    //ReadRotaryEncoder();
   uduino.update();
+
+  //This makes it accurate. DO NOT DELETE
+  ReadEncoders();
+  SoftwareDebouncer(rotaryAPin, aPinReading, aPinCurrentState, aPinCounter);
+  SoftwareDebouncer(rotaryBPin, bPinReading, bPinCurrentState, bPinCounter);
+
+  if((aPinCurrentState == 0 || bPinCurrentState == 0) && !interruptCalled)
+  {
+    interruptCalled = true;
+    ReadEncoders();
+    timeSinceLastInterrupt = millis();
+  }
+
+  //Serial.println(counter);
 
   String serialLine = "_";
 
@@ -55,6 +82,9 @@ void loop() {
     serialLine += String(analogRead(analogInputPins[i]));
   }
 
+  serialLine += " ";
+  serialLine += String(counter);
+
 //Serial data structure
 /**
 0 - testpin1
@@ -65,8 +95,23 @@ void loop() {
 5 - encoder buttons
 
 **/
-  uduino.println(serialLine);
-  // uduino.delay(10);
+
+  if(millis() - timeSinceLastInterrupt > interruptResetDelay && interruptCalled)
+  {
+    interruptCalled = false;
+  }
+
+  if(millis() - timeSinceLastMessage > messageDelay)
+  {
+      uduino.println(serialLine);
+      timeSinceLastMessage = millis();
+  }
+  //Serial.println(counter);
+  //uduino.delay(5);
+
+  //Serial.println(serialLine);
+
+  //uduino.println(counter);
 }
 
 void SetLEDPins()
@@ -87,29 +132,49 @@ void SetLEDPins()
   }
 }
 
-void ReadRotaryEncoder()
+void ReadEncoders()//bool readAState, bool secondPin
 {
   aState = digitalRead(rotaryAPin);
+   // If the previous and the current state of the outputA are different, that means a Pulse has occured
+   if (aState != aLastState){     
+     // If the outputB state is different to the outputA state, that means the encoder is rotating clockwise
+     if (digitalRead(rotaryBPin) != aState) { 
+       if(counter + 1 < 1024)
+        counter ++;
+     } else {
+       if(counter - 1 > 0)
+        counter --;
+     }
+   } 
+   aLastState = aState; // Updates the previous state of the outputA with the current state
+}
 
-  if(aState != aLastState)
+int SoftwareDebouncer(int pin, int& pinReading, int& pinCurrentState, int& pinCounter)
+{
+  bool inLoop = true;
+  int loopCounter = 0;
+
+  while(inLoop && loopCounter < 5)
   {
-    if(digitalRead(rotaryBPin) != aState)
+    loopCounter++;
+    pinReading = digitalRead(pin);
+    if(pinReading == pinCurrentState && pinCounter > 0)
     {
-      counter++;
-    } else {
-      counter--;
+      pinCounter--;
+    }
+
+    if(pinReading != pinCurrentState)
+    {
+      pinCounter++;
+    }
+
+    if(pinCounter >= debounce_count)
+    {
+      pinCounter = 0;
+      pinCurrentState = pinReading;
+      return pinCurrentState;
     }
   }
 
-  // if(counter > 512)
-  // {
-  //   counter = 512;
-  // }
-
-  // if(counter < 0)
-  // {
-  //   counter = 0;
-  // }
-
-  aLastState = aState;
+  return -1;
 }
