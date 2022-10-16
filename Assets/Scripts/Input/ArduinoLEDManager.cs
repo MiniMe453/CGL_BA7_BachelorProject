@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Uduino;
+using UnityTimer;
 
 namespace Rover.Arduino
 {
@@ -19,6 +20,14 @@ namespace Rover.Arduino
             }
 
             Application.quitting += OnApplicationQuit;
+
+            Timer.Register(0.25f, () => SendLEDCommand(), isLooped: true);
+        }
+
+        private static void SendLEDCommand()
+        {
+            Debug.Log("Sent command");
+            UduinoManager.Instance.sendCommand("led", ledPinStates);
         }
 
         public static void SetLEDMode(int pin, int value)
@@ -26,9 +35,12 @@ namespace Rover.Arduino
             if (applicationQuitting)
                 return;
 
-            ledPinStates[(pin - 22) / 2] = value;
+//            if((pin - 22) % 2 == 0)
+                ledPinStates[(pin - 22) / 2] = value;
+            // else
+            //     ledPinStates[pin - 22] = value; 
 
-            UduinoManager.Instance.sendCommand("led", ledPinStates);
+            //UduinoManager.Instance.sendCommand("led", ledPinStates);
         }
 
         public static void SetLEDMode(int[] pin, int[] value)
@@ -44,10 +56,13 @@ namespace Rover.Arduino
 
             for (int i = 0; i < pin.Length; i++)
             {
-                ledPinStates[(pin[i] - 22) / 2] = value[i];
+                // if((pin[i] - 22) % 2 == 0)
+                    ledPinStates[(pin[i] - 22) / 2] = value;
+                // else
+                //     ledPinStates[pin[i] - 22] = value; 
             }
 
-            UduinoManager.Instance.sendCommand("led", ledPinStates);
+            //UduinoManager.Instance.sendCommand("led", ledPinStates);
         }
 
         private static void OnApplicationQuit()

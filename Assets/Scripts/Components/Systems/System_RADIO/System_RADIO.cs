@@ -13,6 +13,8 @@ namespace Rover.Systems
 
         private float m_currentFreq;
         public float signalSmoothingSpeed = 50;
+        private RadioManager.ERadioTypes m_selectedRadioBand = RadioManager.ERadioTypes.FM;
+        private int[] m_ledPins = {42, 36, 34};
 
         void Start()
         {
@@ -29,23 +31,29 @@ namespace Rover.Systems
 
             float newFreq = receiverData.frequencyMin + ((receiverData.frequencyMax - receiverData.frequencyMin) * percentage);
 
-            m_currentFreq = newFreq;
+            receiverData.Frequency = newFreq;
             
         }
 
         void OnButtonPressed(int pin)
         {
-            Debug.LogError("Radio Button Pressed");
-        }
+            if((int)m_selectedRadioBand == 2)
+                m_selectedRadioBand = 0;
+            else
+                m_selectedRadioBand++;
 
-        void Update()
-        {
-            if(Mathf.Abs(m_currentFreq - receiverData.Frequency) > 0.1)
+            switch(m_selectedRadioBand)
             {
-                receiverData.Frequency += signalSmoothingSpeed * Time.deltaTime * Mathf.Sign(m_currentFreq - receiverData.Frequency);
+                case RadioManager.ERadioTypes.FM:
+                    LEDManager.SetLEDMode(m_ledPins, new int[] {1,0,0});
+                    break;
+                case RadioManager.ERadioTypes.AM:
+                    LEDManager.SetLEDMode(m_ledPins, new int[] {0,1,0});
+                    break;
+                case RadioManager.ERadioTypes.Test:
+                    LEDManager.SetLEDMode(m_ledPins, new int[] {0,0,1});
+                    break;
             }
-
-            Debug.LogError(receiverData.Frequency);
         }
     }
 }
