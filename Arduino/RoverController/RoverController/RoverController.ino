@@ -1,7 +1,9 @@
-#include <Encoder.h>
-
 #include<Uduino.h>
+#include<LiquidCrystal.h>
+
+
 Uduino uduino("RoverController");
+LiquidCrystal lcd(10,9,5,6,7,8);
 
 int buttonInputPins[] = {53, 51, 49, 47, 45, 11, 41, 39,37};
 int numOfDigitalInputs = 9;
@@ -48,8 +50,10 @@ void setup() {
 
   pinMode(rotaryAPin, INPUT);
   pinMode(rotaryBPin, INPUT);
+  lcd.begin(16,2);
 
   uduino.addCommand("led", SetLEDPins);
+  uduino.addCommand("lcd", UpdateLCD);
 }
 
 void loop() {
@@ -130,6 +134,21 @@ void SetLEDPins()
       arg = uduino.next();
     }
   }
+}
+
+void UpdateLCD()
+{
+  char *arg;
+  arg = uduino.next();
+
+  if(arg != NULL)
+  {
+    lcd.setCursor(0, 0);
+    lcd.print(arg);
+    arg = uduino.next();
+    lcd.setCursor(0,1);
+    lcd.print(arg);
+  }  
 }
 
 void ReadEncoders()//bool readAState, bool secondPin
