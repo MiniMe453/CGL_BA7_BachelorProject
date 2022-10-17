@@ -140,30 +140,30 @@ namespace Uduino {
                 string message = (string)writeQueue.Dequeue();
                 try
                 {
-                    try
-                    {
+                    // try
+                    // {
                         serial.WriteLine(message);
                         serial.BaseStream.Flush();
                         Log.Info("<color=#4CAF50>" + message + "</color> sent to <color=#2196F3>[" + (name != "" ? name : _port) + "]</color>", true);
-                    }
-                    catch (Exception e)
-                    {
-                        writeQueue.Enqueue(message);
-                        Log.Warning("Impossible to send the message <color=#4CAF50>" + message + "</color> to <color=#2196F3>[" + (name != "" ? name : _port) + "]</color>: " + e, true);
-                        if(e.GetType() == typeof(System.IO.IOException) && boardStatus == BoardStatus.Found)
-                        {
-                            errorsTries++;
-                            if(errorsTries > 5)
-                            {
-                                errorsTries = 0;
-                                UduinoManager.Instance.InvokeAsync(() =>
-                                {
-                                    UduinoManager.Instance.CloseDevice(this);
-                                });
-                            }
-                        }
-                        return false;
-                    }
+                    // }
+                    // catch (Exception e)
+                    // {
+                    //     writeQueue.Enqueue(message);
+                    //     Log.Warning("Impossible to send the message <color=#4CAF50>" + message + "</color> to <color=#2196F3>[" + (name != "" ? name : _port) + "]</color>: " + e, true);
+                    //     if(e.GetType() == typeof(System.IO.IOException) && boardStatus == BoardStatus.Found)
+                    //     {
+                    //         errorsTries++;
+                    //         if(errorsTries > 5)
+                    //         {
+                    //             errorsTries = 0;
+                    //             UduinoManager.Instance.InvokeAsync(() =>
+                    //             {
+                    //                 //UduinoManager.Instance.CloseDevice(this);
+                    //             });
+                    //         }
+                    //     }
+                    //     return false;
+                    // }
                 }
                 catch (Exception e)
                 {

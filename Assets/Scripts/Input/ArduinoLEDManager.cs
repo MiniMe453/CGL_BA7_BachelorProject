@@ -4,12 +4,14 @@ using UnityEngine;
 using System;
 using Uduino;
 using UnityTimer;
+using System.IO.Ports;
 
 namespace Rover.Arduino
 {
     public static class LEDManager
     {
         private static object[] ledPinStates = new object[16];
+        private static bool m_pinStatesUpdated = false;
         private static bool applicationQuitting = false;
 
         static LEDManager()
@@ -19,15 +21,18 @@ namespace Rover.Arduino
                 ledPinStates[i] = 0;
             }
 
-            Application.quitting += OnApplicationQuit;
+            //Application.quitting += OnApplicationQuit;
 
-            Timer.Register(0.25f, () => SendLEDCommand(), isLooped: true);
+            Timer.Register(0.1f, () => SendLEDCommand(), isLooped: true);
         }
 
         private static void SendLEDCommand()
         {
-            Debug.Log("Sent command");
-            UduinoManager.Instance.sendCommand("led", ledPinStates);
+            if(UduinoManager.Instance.isConnected() && m_pinStatesUpdated)
+            {
+                m_pinStatesUpdated = false;
+                UduinoManager.Instance.sendCommand("led", ledPinStates);
+            }
         }
 
         public static void SetLEDMode(int pin, int value)
@@ -35,12 +40,12 @@ namespace Rover.Arduino
             if (applicationQuitting)
                 return;
 
-//            if((pin - 22) % 2 == 0)
+           if((pin - 22) % 2 == 0)
                 ledPinStates[(pin - 22) / 2] = value;
-            // else
-            //     ledPinStates[pin - 22] = value; 
+            else
+                ledPinStates[pin - 22] = value; 
 
-            //UduinoManager.Instance.sendCommand("led", ledPinStates);
+            m_pinStatesUpdated = true;
         }
 
         public static void SetLEDMode(int[] pin, int[] value)
@@ -56,25 +61,25 @@ namespace Rover.Arduino
 
             for (int i = 0; i < pin.Length; i++)
             {
-                // if((pin[i] - 22) % 2 == 0)
-                    ledPinStates[(pin[i] - 22) / 2] = value;
-                // else
-                //     ledPinStates[pin[i] - 22] = value; 
+                if((pin[i] - 22) % 2 == 0)
+                    ledPinStates[(pin[i] - 22) / 2] = value[i];
+                else
+                    ledPinStates[pin[i] - 22] = value[i]; 
             }
 
-            //UduinoManager.Instance.sendCommand("led", ledPinStates);
+            m_pinStatesUpdated = true;
         }
 
-        private static void OnApplicationQuit()
-        {
-            applicationQuitting = true;
-            for (int i = 0; i < ledPinStates.Length; i++)
-            {
-                ledPinStates[i] = 0;
-            }
+        // private static void OnApplicationQuit()
+        // {
+        //     applicationQuitting = true;
+        //     for (int i = 0; i < ledPinStates.Length; i++)
+        //     {
+        //         ledPinStates[i] = 0;
+        //     }
 
-            UduinoManager.Instance.sendCommand("led", ledPinStates);
-        }
+        //     UduinoManager.Instance.sendCommand("led", ledPinStates);
+        // }
     }
 }
 

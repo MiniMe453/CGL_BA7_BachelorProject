@@ -12,6 +12,7 @@ namespace Rover.Settings
         public const int GAME_RES_Y = 600;
         public const float PHOTO_LOAD_TIME = 10f;
         public const float PHOTO_VIEWER_LOAD_TIME = 2f;
+        public const int PROXIMITY_LAYER_INDEX = 6;
     }
 }
 

@@ -9,7 +9,7 @@ namespace Rover.Systems
     {
         private bool m_power;
         public bool Power { get { return m_power; } }
-        public event Action<bool> EOnPowerChanged;
+        //public event Action<bool> EOnPowerChanged;
         private List<RoverSubsystem> m_subSystems = new List<RoverSubsystem>();
         public List<RoverSubsystem> Subsystems { get { return m_subSystems; } }
 

@@ -11,6 +11,8 @@ namespace Rover.Systems
     {
         private int[] m_ledPins = { 22, 24, 26, 28 };
         private int[] m_ledPinStates = { 0, 0, 0, 0 };
+        private bool m_stateModified = false;
+        private int m_prevQuadrant = 0;
         private Timer m_proximityTimer;
         private List<GameObject> objectsInRange = new List<GameObject>();
 
@@ -23,7 +25,6 @@ namespace Rover.Systems
         {
             float angle = 0f;
             bool sensorActivated = false;
-            m_ledPinStates = new int[] { 0, 0, 0, 0 };
 
             if (objectsInRange.Count > 0)
             {
@@ -50,10 +51,16 @@ namespace Rover.Systems
                 }
             }
 
-            if (sensorActivated)
-                LEDManager.SetLEDMode(m_ledPins, m_ledPinStates);
-            else if (m_ledPinStates != new int[] { 0, 0, 0, 0 })
+            if (sensorActivated && m_stateModified)
             {
+                Debug.Log("QuadrantChanged");
+                m_stateModified = false;
+                LEDManager.SetLEDMode(m_ledPins, m_ledPinStates);
+            }
+            else if (m_stateModified && !sensorActivated)
+            {
+                Debug.Log("Proximity Sensor: Reset Pin States");
+                m_stateModified = false;
                 m_ledPinStates = new int[] { 0, 0, 0, 0 };
                 LEDManager.SetLEDMode(m_ledPins, m_ledPinStates);
             }
@@ -61,16 +68,31 @@ namespace Rover.Systems
 
         private void SetLEDPinStates(int index, int value)
         {
-            m_ledPinStates[index] = value;
+            if(index != m_prevQuadrant)
+            {
+                for(int i = 0;i < m_ledPinStates.Length;i++)
+                {
+                    m_ledPinStates[i] = i == index? 1 : 0;
+                }
+
+                m_prevQuadrant = index;
+                m_stateModified = true;  
+            }
+
         }
 
         void OnTriggerEnter(Collider other)
         {
+            if(other.gameObject.layer != GameSettings.PROXIMITY_LAYER_INDEX)
+                return;
+            
             objectsInRange.Add(other.gameObject);
         }
 
         void OnTriggerExit(Collider other)
         {
+            if(other.gameObject.layer != GameSettings.PROXIMITY_LAYER_INDEX);
+
             objectsInRange.Remove(other.gameObject);
         }
     }

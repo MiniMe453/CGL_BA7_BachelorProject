@@ -19,7 +19,7 @@ bool interruptCalled = false;
 unsigned long timeSinceLastInterrupt;
 unsigned long timeSinceLastMessage;
 unsigned long interruptResetDelay = 25;
-unsigned long messageDelay = 50;
+unsigned long messageDelay = 10;
 
 int aState;
 int aLastState;
@@ -139,10 +139,10 @@ void ReadEncoders()//bool readAState, bool secondPin
    if (aState != aLastState){     
      // If the outputB state is different to the outputA state, that means the encoder is rotating clockwise
      if (digitalRead(rotaryBPin) != aState) { 
-       if(counter + 1 < 1024)
+       if(counter + 1 <= 512)
         counter ++;
      } else {
-       if(counter - 1 > 0)
+       if(counter - 1 >= 0)
         counter --;
      }
    } 

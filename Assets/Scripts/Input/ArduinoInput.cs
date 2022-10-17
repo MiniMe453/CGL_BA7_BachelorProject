@@ -81,6 +81,12 @@ namespace Rover.Arduino
             if(ArduinoInputDecoder.LastMessage.Count <= 0)
                 return;
 
+            if(m_id > ArduinoInputDecoder.LastMessage[0].Length - 1)
+            {
+                Debug.LogError("Input with ID " + m_id + " exceeds last message length " + ArduinoInputDecoder.LastMessage);
+                return;
+            }
+
             float currentValue = float.Parse(ArduinoInputDecoder.LastMessage[0][m_id].ToString());
 
             if(currentValue != m_oldValue)
@@ -110,7 +116,6 @@ namespace Rover.Arduino
     {
         private static List<ArduinoInput> m_arduinoInputs = new List<ArduinoInput>();
         public static List<ArduinoInput> ArduinoInputs { get {return m_arduinoInputs;} }
-        public static event Action EOnInputReadUpdate;
         private static Timer inputUpdateTimer;
 
         static ArduinoInputDatabase()

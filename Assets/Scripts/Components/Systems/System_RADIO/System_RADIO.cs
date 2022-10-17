@@ -27,12 +27,12 @@ namespace Rover.Systems
 
         void OnKnobValueChanged(float value, int pin)
         {
-            float percentage = value/1024;
+            float percentage = value/512;
 
             float newFreq = receiverData.frequencyMin + ((receiverData.frequencyMax - receiverData.frequencyMin) * percentage);
 
             receiverData.Frequency = newFreq;
-            
+            Debug.Log(receiverData.Frequency);
         }
 
         void OnButtonPressed(int pin)

@@ -1979,7 +1979,7 @@ namespace Uduino
                     if (uwr.result == UnityWebRequest.Result.ConnectionError)
 
 #elif UNITY_2021
-                    if (uwr.isNetworkError)
+                    if (uwr.result == UnityWebRequest.Result.ConnectionError)
 
 #else
                     if (uwr.result == UnityWebRequest.Result.ConnectionError)

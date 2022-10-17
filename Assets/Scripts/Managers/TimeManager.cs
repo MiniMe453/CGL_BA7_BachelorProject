@@ -32,7 +32,6 @@ namespace Rover.DateTime
             tmp.Hours = 8;
             tmp.Minutes = 34;
             tmp.Seconds = 15;
-            Debug.LogError("Time manager initialized");
 
             dateTime = tmp;
         }

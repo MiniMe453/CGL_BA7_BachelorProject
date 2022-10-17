@@ -91,9 +91,6 @@ public class RadioReceiverData : ScriptableObject
     public float signalStrength;
     private void SetFrequencyData(float max, float min, float band)
     {
-        Debug.Log((m_Frequency - frequencyMin));
-
-
         m_Frequency = (((m_Frequency - frequencyMin) / (frequencyMax - frequencyMin)) * (max - min)) + min;
 
 
