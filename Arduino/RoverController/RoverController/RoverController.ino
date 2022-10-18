@@ -5,8 +5,8 @@
 Uduino uduino("RoverController");
 LiquidCrystal lcd(10,9,5,6,7,8);
 
-int buttonInputPins[] = {53, 51, 49, 47, 45, 11, 41, 39,37};
-int numOfDigitalInputs = 9;
+int buttonInputPins[] = {53, 51, 49, 47, 45, 11, 41, 39, 37, 43};
+int numOfDigitalInputs = 10;
 
 int analogInputPins[] = {A0, A1, A2};
 int numOfAnalogInputs = 3;

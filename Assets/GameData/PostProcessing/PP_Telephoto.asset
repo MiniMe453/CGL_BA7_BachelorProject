@@ -1403,6 +1403,7 @@ MonoBehaviour:
   - {fileID: 3141381748352441524}
   - {fileID: -5141743536478680508}
   - {fileID: -2120749728855457398}
+  - {fileID: 4041458489104841462}
 --- !u!114 &3141381748352441524
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -1429,3 +1430,22 @@ MonoBehaviour:
   fastMode:
     overrideState: 1
     value: 1
+--- !u!114 &4041458489104841462
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e91327c2306b2e147a162ad3a840c80f, type: 3}
+  m_Name: Grayscale
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  blend:
+    overrideState: 0
+    value: 0.5

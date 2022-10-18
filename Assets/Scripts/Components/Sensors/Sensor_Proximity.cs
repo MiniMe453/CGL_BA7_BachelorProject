@@ -91,7 +91,8 @@ namespace Rover.Systems
 
         void OnTriggerExit(Collider other)
         {
-            if(other.gameObject.layer != GameSettings.PROXIMITY_LAYER_INDEX);
+            if(other.gameObject.layer != GameSettings.PROXIMITY_LAYER_INDEX)
+                return;
 
             objectsInRange.Remove(other.gameObject);
         }

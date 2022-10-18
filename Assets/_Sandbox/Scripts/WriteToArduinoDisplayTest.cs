@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Rover.DateTime;
 using Uduino;
+using Rover.Systems;
 
 public class WriteToArduinoDisplayTest : MonoBehaviour
 {
@@ -18,10 +19,10 @@ public class WriteToArduinoDisplayTest : MonoBehaviour
     void OnNewTime(DateTimeStruct time)
     {
         counter++;
-        string tmp = time.Years.ToString() + "y:" + time.Days.ToString() + "d:"+time.Hours.ToString("00")+":"+time.Minutes.ToString("00")+":"+time.Seconds.ToString("00");
-        lcdData[0] = tmp;
-        Debug.Log(tmp);
-        lcdData[1] = counter.ToString("00000");
+        string timeStr = time.Years.ToString() + "y:" + time.Days.ToString() + "d:"+time.Hours.ToString("00")+":"+time.Minutes.ToString("00")+":"+time.Seconds.ToString("00");
+        string gpsStr = System_GPS.GPSCoordinates.x.ToString("00.000") + ":" + System_GPS.GPSCoordinates.y.ToString("00.000");
+        lcdData[0] = timeStr;
+        lcdData[1] = gpsStr;
 
         UduinoManager.Instance.sendCommand("lcd", lcdData);
     }
