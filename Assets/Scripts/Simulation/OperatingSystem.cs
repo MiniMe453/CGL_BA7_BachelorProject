@@ -9,7 +9,7 @@ namespace Rover.OS
     public static class OperatingSystem
     {
         public static event Action<OSState> EOnOperationSystemStateChange;
-        private static OSState m_osState;
+        private static OSState m_osState = OSState.RoverControl;
         public static OSState OSState { get { return m_osState; } }
         private static bool m_allowUserControl = true;
         public static bool AllowUserControl {get{return m_allowUserControl;}}
