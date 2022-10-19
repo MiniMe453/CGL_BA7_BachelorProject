@@ -53,7 +53,7 @@ Shader "Hidden/Custom/Grayscale"
                 
                 //DecodeDepthNormal(cdn, depth, normal);
                 float3 n = DecodeViewNormalStereo(cdn) * float3(1.0, 1.0, 0);
-                n = n = mul((float3x3)_camToWorld, n);
+                //n = n = mul((float3x3)_camToWorld, n);
 
                 
                 

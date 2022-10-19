@@ -21,6 +21,7 @@ public sealed class GrayscaleRenderer : PostProcessEffectRenderer<Grayscale>
         sheet.properties.SetColor("_NearColor", settings.nearColor);
         sheet.properties.SetColor("_DistanceColor", settings.distantColor);
         sheet.properties.SetMatrix("_camToWorld", Camera.current.cameraToWorldMatrix);
-        context.command.BlitFullscreenTriangle(context.source, context.destination, sheet, 0);
+        //context.command.BlitFullscreenTriangle(context.source, context.destination, sheet, 0);
+       // context.command.Blit(context.source, context.destination, );
     }
 }

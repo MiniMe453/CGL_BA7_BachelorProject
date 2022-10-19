@@ -102,6 +102,9 @@ namespace Rover.Arduino
 
         private void ReadAnalogInput()
         {
+            if(ArduinoInputDecoder.LastMessage.Count <= 0)
+                return;
+
             float currentValue = float.Parse(ArduinoInputDecoder.LastMessage[m_id].ToString());
 
             if(currentValue != m_oldValue)
@@ -165,6 +168,9 @@ namespace Rover.Arduino
 
         private static void OnMessageReceived(string data, UduinoDevice device)
         {
+            if(data[0] != '_')
+                return;
+                
             data = data.Remove(0,1);
 
             string[] split = data.Split(' ');

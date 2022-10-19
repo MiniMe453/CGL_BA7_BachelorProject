@@ -186,7 +186,7 @@ GameObject:
   - component: {fileID: 4163858645151143473}
   - component: {fileID: 6935261752910008202}
   - component: {fileID: 1698709808708956383}
-  - component: {fileID: 2608268449341584319}
+  - component: {fileID: 220141505599853414}
   m_Layer: 3
   m_Name: PhotoCamera
   m_TagString: MainCamera
@@ -240,13 +240,13 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
-  m_RenderingPath: -1
+    m_Bits: 384
+  m_RenderingPath: 1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
+  m_HDR: 0
+  m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
@@ -311,8 +311,10 @@ MonoBehaviour:
   breakBeforeColorGrading: 0
   m_BeforeTransparentBundles: []
   m_BeforeStackBundles: []
-  m_AfterStackBundles: []
---- !u!114 &2608268449341584319
+  m_AfterStackBundles:
+  - assemblyQualifiedName: Grayscale, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+--- !u!114 &220141505599853414
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -321,12 +323,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 6353747399847316479}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c520d478f3d2445429bd7ac9c92b03a3, type: 3}
+  m_Script: {fileID: 11500000, guid: 3b6f444a5052d2d42b75d31174257188, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  postProcessLayer: {fileID: 1698709808708956383}
-  lightMeter: 0
-  histogram: 0
-  waveform: 0
-  vectorscope: 0
-  debugOverlay: 2
+  roughnessThreashold: 0.99
+  blend: 4.8
+  color: {r: 1, g: 0.7275475, b: 0.07075471, a: 1}
