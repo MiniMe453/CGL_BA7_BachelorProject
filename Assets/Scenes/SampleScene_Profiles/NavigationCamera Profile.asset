@@ -18,7 +18,7 @@ MonoBehaviour:
     value: 1
   blend:
     overrideState: 1
-    value: 6970
+    value: 5
   nearColor:
     overrideState: 0
     value: {r: 0, g: 0, b: 0, a: 0}
