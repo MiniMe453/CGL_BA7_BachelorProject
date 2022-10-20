@@ -5,6 +5,7 @@ using Rover.Arduino;
 using Rover.OS;
 using UnityTimer;
 using Rover.Systems;
+using Rover.Settings;
 
 public class System_LIDAR : MonoBehaviour
 {
@@ -35,7 +36,7 @@ public class System_LIDAR : MonoBehaviour
     void SpawnLidarPoints()
     {
         OperatingSystem.SetUserControl(true);
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, 10f);
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, GameSettings.LIDAR_SCAN_RANGE);
 
         foreach(Collider collider in hitColliders)
         {

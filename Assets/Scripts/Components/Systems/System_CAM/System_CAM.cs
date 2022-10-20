@@ -30,8 +30,11 @@ namespace Rover.Systems
         private List<int> m_ledPins = new List<int>() {52, 50, 48, 46};
         public List<Camera> cameraList;
         private static int m_screenshotCount;
+        private static float m_heading;
+        public static float Heading {get {return m_heading;}}
         public List<Struct_CameraPhoto> m_photos = new List<Struct_CameraPhoto>();
         private CanNode m_canNode = new CanNode(0x2000, "Camera System", CanNetwork.Can0);
+        public static event System.Action<CameraMode> EOnNewCameraSelected;
 
         void Start()
         {
@@ -77,6 +80,7 @@ namespace Rover.Systems
                 return;
 
             m_cameraMode = newMode;
+            EOnNewCameraSelected?.Invoke(m_cameraMode);
 
             Debug.LogError("Selected Rover Camera is now "+m_cameraMode);
         }
@@ -145,6 +149,15 @@ namespace Rover.Systems
             frame.nodeID = CanIDs.SYSTEM_CAM;
             frame.timestamp = TimeManager.GetCurrentDateTime();
             CanNetwork.Can0.SendCANFrame(frame);
+        }
+
+        void Update()
+        {
+            m_heading = Vector3.SignedAngle(transform.forward, new Vector3(0,0,1), Vector3.up);
+            float sign = Mathf.Sign(m_heading);
+
+            if(sign < 0)
+                m_heading = 360 - Mathf.Abs(m_heading);
         }
     }
 

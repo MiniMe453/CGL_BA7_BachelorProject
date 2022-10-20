@@ -50,6 +50,7 @@ namespace Rover.OS
             m_currentPhotoCount = cameraSystem.m_photos.Count - 1;
             UIManager.AddToViewport(canvas, 100);
             OperatingSystem.SetUserControl(false);
+            applicationInputs.Disable();
         }
 
         protected override void OnAppQuit()
@@ -96,6 +97,7 @@ namespace Rover.OS
                             onUpdate: secondsElapsed => LoadPhotoUpdate(secondsElapsed, Vector3.zero, Vector3.zero, loadFirstPhoto),
                             onComplete: () => {
                                 overlay.SetActive(true);
+                                applicationInputs.Enable();
                             });
         }
 

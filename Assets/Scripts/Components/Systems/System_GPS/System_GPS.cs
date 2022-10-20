@@ -18,8 +18,13 @@ namespace Rover.Systems
             m_gpsCoordX = GameSettings.GPS_COORD_X_MIN + ((gameObject.transform.position.x/GameSettings.TERRAIN_X_MAX) * (GameSettings.GPS_COORD_X_MAX - GameSettings.GPS_COORD_X_MIN));
             m_gpsCoordY = GameSettings.GPS_COORD_Y_MIN + ((gameObject.transform.position.z/GameSettings.TERRAIN_Y_MAX) * (GameSettings.GPS_COORD_Y_MAX - GameSettings.GPS_COORD_Y_MIN));
 
-            // m_heading = Mathf.Abs(gameObject.transform.rotation.y);
-            // Debug.LogError(m_heading);
+           // m_heading = gameObject.transform.rotation.y;
+
+            m_heading = Vector3.SignedAngle(transform.forward, new Vector3(0,0,1), Vector3.up);
+            float sign = Mathf.Sign(m_heading);
+
+            if(sign < 0)
+                m_heading = 360 - Mathf.Abs(m_heading);
 
         }
     }

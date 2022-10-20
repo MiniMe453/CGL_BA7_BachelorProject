@@ -13,12 +13,13 @@ namespace Rover.Settings
         public const float PHOTO_LOAD_TIME = 10f;
         public const float PHOTO_VIEWER_LOAD_TIME = 2f;
         public const int PROXIMITY_LAYER_INDEX = 6;
-        public const float GPS_COORD_X_MIN = 23;
-        public const float GPS_COORD_X_MAX = 30;
-        public const float GPS_COORD_Y_MIN = 50;
-        public const float GPS_COORD_Y_MAX = 65;
-        public const float TERRAIN_X_MAX = 1000;
-        public const float TERRAIN_Y_MAX = 1000;
+        public const float GPS_COORD_X_MIN = 8;
+        public const float GPS_COORD_X_MAX = 12;
+        public const float GPS_COORD_Y_MIN = 19;
+        public const float GPS_COORD_Y_MAX = 23;
+        public const float TERRAIN_X_MAX = 5000;
+        public const float TERRAIN_Y_MAX = 5000;
+        public const float LIDAR_SCAN_RANGE = 20f;
     }
 }
 
