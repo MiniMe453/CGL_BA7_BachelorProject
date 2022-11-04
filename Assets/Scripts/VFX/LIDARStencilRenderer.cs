@@ -4,11 +4,11 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEditor;
 
-[ExecuteInEditMode]
-[RequireComponent(typeof(Camera))]
-#if UNITY_5_4_OR_NEWER
-    [ImageEffectAllowedInSceneView]
-#endif
+// [ExecuteInEditMode]
+// [RequireComponent(typeof(Camera))]
+// #if UNITY_5_4_OR_NEWER
+//     [ImageEffectAllowedInSceneView]
+// #endif
 public class LIDARStencilRenderer : MonoBehaviour
 {
     static class Uniforms

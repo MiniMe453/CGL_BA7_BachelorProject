@@ -13,9 +13,9 @@ TagManager:
   - UI
   - ProximitySensorDetection
   - NavCameraViewMode
-  - LIDAR Points
-  - NavCameraDetectionLayer
-  - NavCameraInvisible
+  - LIDARVisibleLayer
+  - LIDARDetectionLayer
+  - LIDARCameraInvisible
   - 
   - 
   - 

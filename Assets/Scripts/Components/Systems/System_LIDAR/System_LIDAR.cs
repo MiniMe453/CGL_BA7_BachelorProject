@@ -20,6 +20,8 @@ public class System_LIDAR : MonoBehaviour
         m_LidarButton.EOnButtonPressed += OnButtonPressed;
 
         Timer.Register(0.25f, () => CheckLidarArea(), isLooped: true);
+
+        Debug.LogError("Timer Started");
     }
 
     void OnButtonPressed(int pin)
@@ -47,22 +49,27 @@ public class System_LIDAR : MonoBehaviour
 
         foreach(Collider collider in m_hitColliders)
         {
-            Debug.Log(collider.gameObject.name);
-            collider.gameObject.layer = LayerMask.NameToLayer("NavCameraViewMode");
+            Debug.Log(collider.gameObject.layer);
+            if(collider.gameObject.layer != 9)
+                continue;
             
+            collider.gameObject.layer = 8;
+
             for(int i = 0; i< collider.gameObject.transform.childCount; i++)
             {
-                collider.gameObject.transform.GetChild(i).gameObject.layer = LayerMask.NameToLayer("NavCameraViewMode");
+                collider.gameObject.transform.GetChild(i).gameObject.layer = 8;
             }
         }
     }
 
     void CheckLidarArea()
     {
-        m_hitColliders = Physics.OverlapSphere(transform.position, GameSettings.LIDAR_SCAN_RANGE, LayerMask.NameToLayer("NavCameraDetectionLayer"));
+                Debug.Log("Check colliders IN RANGE");
+        m_hitColliders = Physics.OverlapSphere(transform.position, GameSettings.LIDAR_SCAN_RANGE, LayerMask.GetMask(new string[] {"LIDARDetectionLayer"}));
 
         if(m_hitColliders.Length == 0)
         {
+            Debug.Log("NO COLLIDERS IN RANGE");
             if(!m_OnLeaveEventFired)
             {
                 EOnObjectLeaveRange?.Invoke();
@@ -70,7 +77,9 @@ public class System_LIDAR : MonoBehaviour
             }
             return;
         }
-            
+
+        Debug.Log(m_hitColliders.Length);
+        Debug.Log("COLLIDERS IN RANGE");  
         m_OnLeaveEventFired = false;
         EOnObjectEnterRange?.Invoke();
     }
