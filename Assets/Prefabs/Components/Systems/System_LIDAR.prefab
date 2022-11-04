@@ -24,9 +24,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6926424866165408992}
-  m_LocalRotation: {x: -0, y: -0.06880755, z: 0, w: 0.99763}
-  m_LocalPosition: {x: 301.43323, y: -152.95117, z: 576.0871}
-  m_LocalScale: {x: 1.0000001, y: 1, z: 1.0000001}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -43,6 +43,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9cf513a2ff1781743aa4c9d8c73fdb4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numOfLidarPoints: 0
-  parentGameObject: {fileID: 2918146746784825334}
-  lidarPointPrefab: {fileID: 0}
