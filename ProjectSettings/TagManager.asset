@@ -14,8 +14,8 @@ TagManager:
   - ProximitySensorDetection
   - NavCameraViewMode
   - LIDAR Points
-  - 
-  - 
+  - NavCameraDetectionLayer
+  - NavCameraInvisible
   - 
   - 
   - 
