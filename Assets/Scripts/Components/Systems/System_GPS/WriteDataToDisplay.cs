@@ -5,10 +5,9 @@ using Rover.DateTime;
 using Uduino;
 using Rover.Systems;
 
-public class WriteToArduinoDisplayTest : MonoBehaviour
+public class WriteDataToDisplay : MonoBehaviour
 {
     public object[] lcdData = new object[2];
-    public int counter;
     void Start()
     {
         lcdData[0] = "";
