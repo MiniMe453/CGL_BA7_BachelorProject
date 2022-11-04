@@ -17,18 +17,23 @@ public class System_NAV : MonoBehaviour
     public TextMeshProUGUI selectedCamera;
     public TextMeshProUGUI dateTime;
     public TextMeshProUGUI gpsCoords;
+    public TextMeshProUGUI objInRange;
 
     void Start()
     {
         Timer.Register(1f, () => UpdateValues(), isLooped: true);
         TimeManager.EOnDateTimeUpdated += OnNewDateTime;
         System_CAM.EOnNewCameraSelected += OnNewCameraSelected;
+        System_LIDAR.EOnObjectEnterRange += OnObjectEnterLIDARRange;
+        System_LIDAR.EOnObjectLeaveRange += OnObjectLeaveLIDARRange;
     }
 
     void OnDisable()
     {
         TimeManager.EOnDateTimeUpdated -= OnNewDateTime;
         System_CAM.EOnNewCameraSelected -= OnNewCameraSelected;
+        System_LIDAR.EOnObjectEnterRange -= OnObjectEnterLIDARRange;
+        System_LIDAR.EOnObjectLeaveRange -= OnObjectLeaveLIDARRange;
     }
 
     void OnNewDateTime(DateTimeStruct newTime)
@@ -51,4 +56,13 @@ public class System_NAV : MonoBehaviour
         selectedCamera.text = newCamera.ToString().ToUpper();
     }
 
+    void OnObjectEnterLIDARRange()
+    {
+        objInRange.enabled = true;
+    }
+
+    void OnObjectLeaveLIDARRange()
+    {
+        objInRange.enabled = false;
+    }
 }
