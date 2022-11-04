@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEditor;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(Camera))]
@@ -14,7 +15,6 @@ public class LIDARStencilRenderer : MonoBehaviour
     {
         internal static readonly int _RoughnessThreashold = Shader.PropertyToID("_RoughnessThreashold");
         internal static readonly int _BlendValue = Shader.PropertyToID("_Blend");
-
         internal static readonly int _LIDARColor = Shader.PropertyToID("_Color");
     }
 
@@ -66,9 +66,14 @@ public class LIDARStencilRenderer : MonoBehaviour
     public float blend = 1f;
     public Color color = Color.red;
 
-    private void Start()
+    public bool m_RenderEffect = false;
+
+    void OnEnable()
     {
         camera_.depthTextureMode = camera_.depthTextureMode | DepthTextureMode.DepthNormals;
+        Debug.LogError("fuicking a");
+        m_RenderEffect = true;
+        this.enabled = true;
     }
 
     public void OnRenderImage(RenderTexture source, RenderTexture destination)
