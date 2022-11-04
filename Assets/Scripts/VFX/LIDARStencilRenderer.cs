@@ -66,14 +66,11 @@ public class LIDARStencilRenderer : MonoBehaviour
     public float blend = 1f;
     public Color color = Color.red;
 
-    public bool m_RenderEffect = false;
-
     void OnEnable()
     {
         camera_.depthTextureMode = camera_.depthTextureMode | DepthTextureMode.DepthNormals;
         Debug.LogError("fuicking a");
-        m_RenderEffect = true;
-        this.enabled = true;
+        gameObject.GetComponent<LIDARStencilRenderer>().enabled = true;
     }
 
     public void OnRenderImage(RenderTexture source, RenderTexture destination)

@@ -10,9 +10,6 @@ using Rover.Settings;
 public class System_LIDAR : MonoBehaviour
 {
     private ArduinoInput m_LidarButton;
-    public int numOfLidarPoints;
-    public Transform parentGameObject;
-    public GameObject lidarPointPrefab;
     public static event System.Action EOnObjectEnterRange;
     public static event System.Action EOnObjectLeaveRange;
     private Collider[] m_hitColliders = new Collider[] {};
