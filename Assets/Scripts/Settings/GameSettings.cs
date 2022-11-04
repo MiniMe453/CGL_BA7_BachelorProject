@@ -18,7 +18,7 @@ namespace Rover.Settings
         public const float GPS_COORD_Y_MIN = 19;
         public const float GPS_COORD_Y_MAX = 23;
         public const float TERRAIN_MAX = 1000;
-        public const float LIDAR_SCAN_RANGE = 20f;
+        public const float LIDAR_SCAN_RANGE = 50f;
     }
 }
 
