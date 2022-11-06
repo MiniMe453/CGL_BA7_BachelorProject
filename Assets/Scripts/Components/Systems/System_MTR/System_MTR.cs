@@ -75,10 +75,11 @@ namespace Rover.Systems
 
         void FixedUpdate()
         {
+            HandleMotor();
+
             switch(m_joystickControlMode)
             {
                 case JoystickControlMode.RVR:
-                    HandleMotor();
                     HandleSteering();
                     break;
                 case JoystickControlMode.CAM:
@@ -125,7 +126,7 @@ namespace Rover.Systems
             if(pin == 39)
             {
                 m_joystickControlMode = JoystickControlMode.CAM;
-                ApplyBraking(brakeForce);
+                //ApplyBraking(brakeForce);
                 photoCamera.SetActive(true);
                 navigationCamera.SetActive(false);
                 LEDManager.SetLEDMode(38, 1);
