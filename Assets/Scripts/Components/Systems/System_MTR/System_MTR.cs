@@ -59,8 +59,9 @@ namespace Rover.Systems
             m_verticalControl = new ArduinoInput(InputType.Analog, 129, 3, "Vertical Joystick Axis");
             m_verticalControl.EOnValueChanged += OnValueChanged;
 
-            m_CAMButton = new ArduinoInput(InputType.Digital, 39, 7, "Cam Button");
+            m_CAMButton = new ArduinoInput(InputType.Digital, 39, 7, true, 1f, "Cam Button");
             m_CAMButton.EOnButtonPressed += OnButtonPressed;
+            m_CAMButton.EOnButtonHeld += OnButtonHeld;
 
             m_RVRButton = new ArduinoInput(InputType.Digital, 41, 6, "Rvr Button");
             m_RVRButton.EOnButtonPressed += OnButtonPressed;
@@ -154,6 +155,14 @@ namespace Rover.Systems
             }
         }
 
+        void OnButtonHeld(int pin)
+        {
+            if(pin == 39)
+            {
+                StartCoroutine(AnimateCameraTransformReset());
+            }
+        }
+
         void HandleMotor()
         {
             if(m_brakeActivated)
@@ -199,6 +208,25 @@ namespace Rover.Systems
 
             YAxisObject.transform.localRotation = Quaternion.Euler(0, 0, m_yRot);
             XAxisObject.transform.localRotation = Quaternion.Euler(m_xRot, 0, 0);
+        }
+
+        IEnumerator AnimateCameraTransformReset()
+        {
+            float xRotOrig = m_xRot;
+            float yRotOrig = m_yRot;
+            float countDown = 1f;
+
+            while(countDown > 0.01f)
+            {
+                countDown -= (Time.deltaTime / 2);
+                m_yRot = yRotOrig * countDown;
+                m_xRot = xRotOrig * countDown; 
+
+                
+                YAxisObject.transform.localRotation = Quaternion.Euler(0, 0, m_yRot);
+                XAxisObject.transform.localRotation = Quaternion.Euler(m_xRot, 0, 0);
+                yield return null;
+            }
         }
     }
 

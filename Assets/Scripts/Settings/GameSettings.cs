@@ -10,7 +10,7 @@ namespace Rover.Settings
         public const float PROXIMITY_CHECK_DELAY = 0.1f;
         public const int GAME_RES_X = 800;
         public const int GAME_RES_Y = 600;
-        public const float PHOTO_LOAD_TIME = 10f;
+        public const float PHOTO_LOAD_TIME = 5f;
         public const float PHOTO_VIEWER_LOAD_TIME = 2f;
         public const int PROXIMITY_LAYER_INDEX = 6;
         public const float GPS_COORD_X_MIN = 8;
@@ -18,7 +18,8 @@ namespace Rover.Settings
         public const float GPS_COORD_Y_MIN = 19;
         public const float GPS_COORD_Y_MAX = 23;
         public const float TERRAIN_MAX = 1000;
-        public const float LIDAR_SCAN_RANGE = 50f;
+        public const float LIDAR_SCAN_RANGE = 20f;
+        public const float PHOTO_VIEWER_FPS = 5f;
     }
 }
 

@@ -14,6 +14,7 @@ namespace Rover.Arduino
         public event Action<float, int> EOnValueChanged;
         public event Action<int> EOnButtonPressed;
         public event Action<int> EOnButtonReleased;
+        public event Action<int> EOnButtonHeld;
         private InputType m_inputType;
         public InputType InputType {get {return m_inputType;} }
         private Timer m_inputUpdateTimer;
@@ -24,6 +25,23 @@ namespace Rover.Arduino
         public string InputName {get {return m_inputName;} }
         private UduinoDevice m_device;
         private bool m_inputEnabled = true;
+        private bool m_canHoldButton = false;
+        private float m_holdDuration;
+        private float m_holdTimer;
+        private float m_timeSinceStartHold;
+        private bool m_holdStarted = false;
+
+        public ArduinoInput(InputType type, int pin, int id, bool buttonHold = false, float holdTimer = 1f, string name = "Arduino Input")
+        {
+            m_pin = pin;
+            m_id = id;
+            m_inputType = type;
+            m_inputName = name;
+            m_canHoldButton = buttonHold;
+            m_holdDuration = holdTimer;
+
+            ArduinoInputDatabase.RegisterInput(this);
+        }
 
         public ArduinoInput(InputType type, int pin, int id, string name = "Arduino Input")
         {
@@ -31,9 +49,12 @@ namespace Rover.Arduino
             m_id = id;
             m_inputType = type;
             m_inputName = name;
+            m_canHoldButton = false;
+            m_holdDuration = 0;
 
             ArduinoInputDatabase.RegisterInput(this);
         }
+
 
         public void SetupInputPins(UduinoDevice device)
         {
@@ -89,14 +110,52 @@ namespace Rover.Arduino
 
             float currentValue = float.Parse(ArduinoInputDecoder.LastMessage[0][m_id].ToString());
 
+            // if(currentValue == 1f && !m_buttonHoldStarted)
+            // {
+            //     m_buttonHoldStarted = true;
+            // }
+            // else if (m_buttonHoldStarted)
+            // {
+            //     m_buttonHoldStarted = false;
+            // }
+
+            // if(m_buttonHoldStarted)
+            // {
+            //     m_holdTimer += Time.deltaTime;
+
+            //     if(m_holdTimer > m_holdDuration)
+            //     {
+            //         EOnButtonHeld?.Invoke(m_pin);
+            //         return;
+            //     }
+            // }
+
             if(currentValue != m_oldValue)
             {
                 if(currentValue == 1f)
+                {
                     EOnButtonPressed?.Invoke(m_pin);
+                    m_timeSinceStartHold = Time.time;    
+                    m_holdStarted = true;
+                }
                 else
+                {
                     EOnButtonReleased?.Invoke(m_pin);
+                    m_holdStarted = false;
+                }
 
                 m_oldValue = currentValue;
+            }
+
+            if(m_canHoldButton && currentValue == 1f)
+            {
+                if(Time.time - m_timeSinceStartHold > m_holdDuration && m_holdStarted)
+                {
+                    m_holdTimer = 0;
+                    EOnButtonHeld?.Invoke(m_pin);
+                    m_holdStarted = false;
+                    return;
+                }
             }
         }
 

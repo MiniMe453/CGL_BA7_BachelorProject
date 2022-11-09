@@ -7,6 +7,7 @@ using Rover.Settings;
 using Rover.Can;
 using Rover.DateTime;
 using Rover.Interface;
+using UnityEngine.UI;
 
 namespace Rover.Systems
 {
@@ -35,6 +36,9 @@ namespace Rover.Systems
         public List<Struct_CameraPhoto> m_photos = new List<Struct_CameraPhoto>();
         private CanNode m_canNode = new CanNode(0x2000, "Camera System", CanNetwork.Can0);
         public static event System.Action<CameraMode> EOnNewCameraSelected;
+        public RawImage photoPreviewCameraImage;
+        public Camera photoPreviewCamera;
+        private float m_camPhotoFpsCounter = 0;
 
         void Start()
         {
@@ -158,6 +162,32 @@ namespace Rover.Systems
 
             if(sign < 0)
                 m_heading = 360 - Mathf.Abs(m_heading);
+
+            
+            m_camPhotoFpsCounter += Time.deltaTime;
+            
+            if(!photoPreviewCamera.gameObject.activeSelf)
+                return;
+
+            if(m_camPhotoFpsCounter > 1/GameSettings.PHOTO_VIEWER_FPS)
+            {
+                m_camPhotoFpsCounter = 0;
+
+                photoPreviewCamera.enabled = true;
+
+                RenderTexture rt = new RenderTexture(GameSettings.GAME_RES_X, GameSettings.GAME_RES_Y, 24);
+                photoPreviewCamera.targetTexture = rt;
+                Texture2D cameraPhoto = new Texture2D(GameSettings.GAME_RES_X, GameSettings.GAME_RES_Y, TextureFormat.RGB24, false);
+                photoPreviewCamera.Render();
+                RenderTexture.active = rt;
+                
+                cameraPhoto.ReadPixels(new Rect(0,0,GameSettings.GAME_RES_X, GameSettings.GAME_RES_Y),0,0);
+                cameraPhoto.Apply();
+
+                photoPreviewCameraImage.texture = cameraPhoto;
+
+                photoPreviewCamera.enabled = false;
+            }
         }
     }
 
